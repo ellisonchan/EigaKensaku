@@ -7,6 +7,7 @@ Info
 Used with MVP Architecture.
 
 Screenshot
+--------
 ![示例](https://github.com/ellisonchan/EigaKensaku/blob/master/screenshots/MovieSearcher.png)
 
 To-do
