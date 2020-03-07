@@ -1,0 +1,2 @@
+rootProject.name='Eiga Kensaku'
+include ':app'

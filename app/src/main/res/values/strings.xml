@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Eiga Kensaku</string>
+    <string name="edittext_hint">Input keyword</string>
+    <string name="large_text">Movie List.</string>
+    <string name="operation_searching">Movie searching.</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_base">BaseActivity</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+
+    <string name="text_progress_waiting">Searching...</string>
+    <string name="text_progress_refresh_waiting">Refreshing...</string>
+    <string name="text_result_empty">No movie matched. Try some other keywords.</string>
+    <string name="text_result_failed_default">Search failed, try again please!</string>
+    <string name="text_result_failed_network">Search failed, check your wifi please!</string>
+
+    <string name="text_rv_item_title_for_test">Harry Potter</string>
+    <string name="text_rv_item_year_for_test">2016</string>
+    <string name="text_rv_item_type_for_test">Magical</string>
+</resources>

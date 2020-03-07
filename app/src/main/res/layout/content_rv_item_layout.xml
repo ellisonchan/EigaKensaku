@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.ellison.eigakensaku.view.MovieCard xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/design_default_color_primary"
+    app:cardCornerRadius="@dimen/rv_item_post_radius">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+    <ImageView
+        android:id="@+id/iv_post"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/rv_item_post_height"
+        android:scaleType="fitXY"
+        android:adjustViewBounds="true"
+        android:src="@drawable/rv_tem_post_for_test"
+        tools:srcCompat="@drawable/rv_tem_post_for_test" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
+            android:textColor="@android:color/background_dark"
+            android:ellipsize="end"
+            android:singleLine="true"
+
+            android:textStyle="bold"
+            tools:text="@string/text_rv_item_title_for_test" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+        <TextView
+            android:id="@+id/tv_year"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/rv_item_year_size"
+            android:textStyle="italic"
+            tools:text="@string/text_rv_item_year_for_test" />
+
+        <TextView
+            android:id="@+id/tv_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:paddingRight="3dp"
+            android:textColor="@android:color/background_dark"
+            android:textSize="@dimen/rv_item_type_size"
+            android:textStyle="italic"
+            tools:text="@string/text_rv_item_type_for_test" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>
+</com.ellison.eigakensaku.view.MovieCard>
