@@ -1,6 +1,7 @@
 package com.ellison.eigakensaku.view;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import com.ellison.eigakensaku.application.MovieApplication;
 import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
 import com.ellison.eigakensaku.debug.ImageLoadCallback;
+import com.ellison.eigakensaku.utils.EllisonImageDisplayer;
 import com.ellison.eigakensaku.utils.Utils;
 
 import androidx.annotation.NonNull;
@@ -48,14 +50,22 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieHolder> {
     @Override
     public void onBindViewHolder(@NonNull MovieHolder holder, int position) {
         Movie movie = mMovies.get(position);
+        Log.e("ellison2020", "Movie[" + position +"]:" + movie);
 
+        // Show title
         holder.title.setText(movie.getTitle());
+
+        // Show post
+        // EllisonImageDisplayer.getDisplayer(mContext).displayImage(holder.post, movie.getPoster());
         MovieApplication.getImageLoader(mContext).displayImage(movie.getPoster(),
                 holder.post,
                 Utils.getImageOptions(R.drawable.rv_item_post_loading),
                 new ImageLoadCallback());
-//        holder.post.setImageResource(R.drawable.rv_tem_post_for_test);
+
+        // Show year
         holder.year.setText(movie.getYear());
+
+        // Show type
         holder.type.setText(movie.getType());
     }
 

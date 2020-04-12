@@ -18,7 +18,6 @@ public class MovieModel implements IMovieModel, IMovieRequestCallback {
 
     @Override
     public void searchMovie(String keywords) {
-        Log.e("ellison", "MovieModel#searchMovie() current thread:" + Thread.currentThread());
         HttpManager.getInstance().requestMovieList(keywords, Constants.OMDB_URL, this);
     }
 

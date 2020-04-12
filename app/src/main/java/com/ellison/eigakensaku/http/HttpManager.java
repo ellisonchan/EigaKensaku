@@ -22,7 +22,8 @@ public class HttpManager {
     private Handler mHandler;
 
     private HttpManager() {
-        mHandler = new Handler(Looper.getMainLooper());
+        // mHandler = new Handler(Looper.getMainLooper());
+        mHandler = new Handler();
     }
 
     public static HttpManager getInstance() {
@@ -69,19 +70,20 @@ public class HttpManager {
     }
 
     public void requestMovieList(final String keywords, final String url, final IMovieRequestCallback callback) {
-        new Thread(){
-            @Override
-            public void run() {
-                Log.e("ellison", "HttpManager#requestMovieList() current thread:" + Thread.currentThread());
-                requestSearch(keywords, url, callback);
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        // testSucceed(keywords, callback);
-                    }
-                });
-            }
-        }.start();
+        requestSearch(keywords, url, callback);
+//        new Thread(){
+//            @Override
+//            public void run() {
+//                Log.e("ellison", "HttpManager#requestMovieList() current thread:" + Thread.currentThread());
+//                requestSearch(keywords, url, callback);
+//                mHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        // testSucceed(keywords, callback);
+//                    }
+//                });
+//            }
+//        }.start();
     }
 
     private void requestSearch(String keywords, String url, final IMovieRequestCallback callback) {
@@ -95,7 +97,6 @@ public class HttpManager {
         call.enqueue(new Callback<MovieSearchResponse<MovieList>>() {
             @Override
             public void onResponse(Call<MovieSearchResponse<MovieList>> call, Response<MovieSearchResponse<MovieList>> response) {
-                Log.e("ellison", "HttpManager#onResponse() current thread:" + Thread.currentThread());
                 if (response == null || response.body() == null || callback == null) {
                     return;
                 }
