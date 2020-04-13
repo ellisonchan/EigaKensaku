@@ -7,4 +7,9 @@
     <color name="colorSwipeRefreshBg">#007799</color>
     <color name="colorCardViewBg">#3F51b5</color>
 
+    <color name="colorScrollBarThumb">#008ee3</color>
+    <color name="colorScrollBarTrack">#ffffff</color>
+
+
+
 </resources>

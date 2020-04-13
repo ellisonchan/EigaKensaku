@@ -13,4 +13,7 @@
     <dimen name="rv_item_title_size">15sp</dimen>
     <dimen name="rv_item_year_size">13sp</dimen>
     <dimen name="rv_item_type_size">13sp</dimen>
+
+    <dimen name="rv_item_layout_size">80dp</dimen>
+    <dimen name="rv_item_load_size">18sp</dimen>
 </resources>

@@ -10,7 +10,7 @@ public class Constants {
     public static final String OMDB_API_PARAM_PAGE = "page";
 
     public static final int MOVIE_LIST_ROW_NUMBER = 2;
-    public static final int MOVIE_LIST_ITEM_SPACE = 25;
+    public static final int MOVIE_LIST_ITEM_SPACE = 50;
 
     public static final String SEARCH_ERROR_RESULT_LARGE = "Too many results.";
     public static final String SEARCH_ERROR_RESULT_LARGE_TIP = "Too many results!\nTry entering some more specific keywords please!";
@@ -22,4 +22,9 @@ public class Constants {
     public static final String SEARCH_ERROR_UNDEFINED = "Unknown error!\nTry later!";
 
     public static final String SEARCH_ERROR_NETWORK = "Network problem.\nCheck your wi-fi or phone please!";
+
+    public static final int TYPE_RV_CONTENT = 1;
+    public static final int TYPE_RV_LOAD = 2;
+
+    public static final int GET_REQUEST_NO_PAGE_INDEX = 0;
 }

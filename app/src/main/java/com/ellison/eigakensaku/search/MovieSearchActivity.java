@@ -2,6 +2,7 @@ package com.ellison.eigakensaku.search;
 
 import android.content.Context;
 
+import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.presenter.IMoviePresenter;
 import com.ellison.eigakensaku.presenter.MoviePresenter;
@@ -14,9 +15,9 @@ import com.ellison.eigakensaku.view.MovieAdapter;
 import com.ellison.eigakensaku.view.MovieItemDecoration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,16 +34,19 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MovieSearchActivity extends BaseActivity
-        implements IMovieView, EditText.OnEditorActionListener, TextWatcher, SwipeRefreshLayout.OnRefreshListener {
+public class MovieSearchActivity extends BaseActivity implements IMovieView,
+        EditText.OnEditorActionListener,
+        TextWatcher,
+        SwipeRefreshLayout.OnRefreshListener,
+        MovieAdapter.ILoadMoreListener {
+
     private String mKeywords;
     private IMoviePresenter mMoviePresenter;
     private MovieAdapter mMovieAdapter;
 
-//    @BindView(R.id.search_box)
-//    MovieSearchBox mSearchBox;
     @BindView(R.id.search_box)
     EditText mSearchBox;
+    //    MovieSearchBox mSearchBox;
 
     @BindView(R.id.fab)
     FloatingActionButton mFABtn;
@@ -78,6 +82,7 @@ public class MovieSearchActivity extends BaseActivity
     private void initRecyclerView() {
         StaggeredGridLayoutManager sgLM = new StaggeredGridLayoutManager(Constants.MOVIE_LIST_ROW_NUMBER, StaggeredGridLayoutManager.VERTICAL);
         mMovieAdapter = new MovieAdapter(this);
+        mMovieAdapter.setILoadMoreListener(this);
         MovieItemDecoration decoration=new MovieItemDecoration(Constants.MOVIE_LIST_ITEM_SPACE);
 
         if (mRecyclerView != null) {
@@ -87,14 +92,12 @@ public class MovieSearchActivity extends BaseActivity
         }
     }
 
-
     @Override
     protected void onFabBtnClicked() {
         // Start search operation.
-        //Toast.makeText(this, R.string.operation_searching, Toast.LENGTH_SHORT).show();
         ((InputMethodManager) mSearchBox.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mSearchBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        searchMoveRequest();
+        searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
     }
 
     @Override
@@ -110,7 +113,7 @@ public class MovieSearchActivity extends BaseActivity
                     .hideSoftInputFromWindow(mSearchBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
             if (mFABtn.isEnabled()) {
-                searchMoveRequest();
+                searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
             }
             return true;
         }
@@ -137,10 +140,14 @@ public class MovieSearchActivity extends BaseActivity
             if (mRefreshLayout != null) {
                 mRefreshLayout.post(()->mRefreshLayout.setRefreshing(true));
             }
-            searchMoveRequest();
+            searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
             if (mRecyclerView != null)
                 mRecyclerView.setVisibility(View.INVISIBLE);
         }
+    }
+
+    public void onLoadMoreClicked(int moreIndex) {
+        searchMovieRequest(moreIndex);
     }
 
     @Override
@@ -161,12 +168,6 @@ public class MovieSearchActivity extends BaseActivity
         return super.onOptionsItemSelected(item);
     }
 
-    private void searchMoveRequest() {
-        if (mMoviePresenter != null) {
-            mMoviePresenter.searchMovie(mKeywords);
-        }
-    };
-
     private void updateFAButton(String string) {
         if(string != null && !string.isEmpty()) {
             mFABtn.setEnabled(true);
@@ -175,6 +176,23 @@ public class MovieSearchActivity extends BaseActivity
         }
         mKeywords =string;
     }
+
+    private void searchMovieRequest(int pageIndex) {
+        if (mMoviePresenter != null) {
+            mMoviePresenter.searchMovie(mKeywords, pageIndex);
+//            // for test
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    // Test load finish
+//                    // showResult(Utils.makeFakeList(), pageIndex);
+//
+//                    // Test load to end
+//                    showResult(new MovieList(), pageIndex);
+//                }
+//            }, 3000);
+        }
+    };
 
     @Override
     public void showProgress() {
@@ -190,21 +208,35 @@ public class MovieSearchActivity extends BaseActivity
         if (mRefreshLayout != null) {
             mRefreshLayout.post(()->mRefreshLayout.setRefreshing(false));
         }
+
         if (mRecyclerView != null)
             mRecyclerView.setVisibility(View.VISIBLE);
+
         Utils.dismissProgressDialog();
     }
 
     @Override
-    public void showResult(MovieList list) {
+    public void showResult(MovieList list, int pageIndex) {
         if (mMovieAdapter != null) {
-            mMovieAdapter.updateMovies(list);
+            if (pageIndex <= Constants.GET_REQUEST_NO_PAGE_INDEX + 1) {
+                // First load
+                mMovieAdapter.updateMovies(list);
+            } else {
+                // More load
+                mMovieAdapter.updateMovies(list, true);
+            }
         }
     }
 
     @Override
-    public void showFailed(String errorMsg) {
-        Utils.showAlertDialog(this, errorMsg);
-        mMovieAdapter.updateMovies(null);
+    public void showFailed(String errorMsg, int pageIndex) {
+        if (Constants.SEARCH_ERROR_RESULT_KEY_NONE_TIP.equals(errorMsg) && pageIndex >= Constants.GET_REQUEST_NO_PAGE_INDEX + 1) {
+            // Load more to end
+            mMovieAdapter.updateMovies(new MovieList(), true);
+        } else {
+            // Load failed
+            mMovieAdapter.updateMovies(null, true);
+            Utils.showAlertDialog(this, errorMsg);
+        }
     }
 }

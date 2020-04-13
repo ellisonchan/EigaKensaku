@@ -4,6 +4,7 @@ import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
 import com.ellison.eigakensaku.beans.MovieSearchResponse;
 import com.ellison.eigakensaku.constants.Constants;
+import com.ellison.eigakensaku.utils.Utils;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -38,39 +39,20 @@ public class HttpManager {
         return mInstance;
     }
 
-    private void testFail(final String keywords, final IMovieRequestCallback callback) {
+    private void testFail(final String keywords, final int pageIndex,  final IMovieRequestCallback callback) {
         if (callback != null) {
-            callback.onRequestFailed(keywords, "Search failed, try again please!");
+            callback.onRequestFailed(keywords,"Search failed, try again please!", pageIndex);
         }
     }
 
-    private void testSucceed(final String keywords, final IMovieRequestCallback callback) {
+    private void testSucceed(final String keywords, int pageIndex, final IMovieRequestCallback callback) {
         if (callback != null) {
-            callback.onRequestSucceed(keywords, makeFakeList());
+            callback.onRequestSucceed(keywords, Utils.makeFakeList(), pageIndex);
         }
     }
 
-    private MovieList makeFakeList() {
-        MovieList fake = new MovieList();
-
-        for (int i = 0; i < 10; i++) {
-            Movie movie = new Movie();
-            movie.setTitle("Harry Potter " + (i + 1));
-            if (i == 1 || i ==3) {
-                movie.setPoster("https://cn.bing.com/th?id=OIP.fkcuaLhZJevCj6ja5lpm1wHaJv&pid=Api&rs=1");
-            } else {
-                movie.setPoster("https://i.ebayimg.com/images/i/291520000466-0-1/s-l1000.jpg");
-            }
-            movie.setYear(String.valueOf(i + 2000));
-            movie.setType("Magical");
-            fake.add(movie);
-        }
-
-        return  fake;
-    }
-
-    public void requestMovieList(final String keywords, final String url, final IMovieRequestCallback callback) {
-        requestSearch(keywords, url, callback);
+    public void requestMovieList(final String keywords, int pageIndex, final String url, final IMovieRequestCallback callback) {
+        requestSearch(keywords, pageIndex, url, callback);
 //        new Thread(){
 //            @Override
 //            public void run() {
@@ -79,21 +61,27 @@ public class HttpManager {
 //                mHandler.post(new Runnable() {
 //                    @Override
 //                    public void run() {
-//                        // testSucceed(keywords, callback);
+//                        // testSucceed(keywords, pageIndex, callback);
 //                    }
 //                });
 //            }
 //        }.start();
     }
 
-    private void requestSearch(String keywords, String url, final IMovieRequestCallback callback) {
+    private void requestSearch(String keywords, int pageIndex, String url, final IMovieRequestCallback callback) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         GetRequest_Interface request = retrofit.create(GetRequest_Interface.class);
 
-        Call<MovieSearchResponse<MovieList>> call = request.getCall(keywords, Constants.OMDB_API_KEY);
+        Call<MovieSearchResponse<MovieList>> call;
+        if (pageIndex <= Constants.GET_REQUEST_NO_PAGE_INDEX) {
+            call = request.getCall(keywords, Constants.OMDB_API_KEY);
+        } else {
+            call = request.getCall(keywords, pageIndex, Constants.OMDB_API_KEY);
+        }
+
         call.enqueue(new Callback<MovieSearchResponse<MovieList>>() {
             @Override
             public void onResponse(Call<MovieSearchResponse<MovieList>> call, Response<MovieSearchResponse<MovieList>> response) {
@@ -108,23 +96,23 @@ public class HttpManager {
                     if (!Boolean.valueOf(result.getResponse())) {
                         if (result.getError() != null && !result.getError().isEmpty()) {
                             if (Constants.SEARCH_ERROR_RESULT_LARGE.equals(result.getError())) {
-                                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_RESULT_LARGE_TIP);
+                                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_RESULT_LARGE_TIP, pageIndex);
                             } else if (Constants.SEARCH_ERROR_RESULT_KEY_INVALID.equals(result.getError())) {
-                                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_INVALID_TIP);
+                                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_INVALID_TIP, pageIndex);
                             } else if (Constants.SEARCH_ERROR_RESULT_KEY_NONE.equals(result.getError())) {
-                                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_NONE_TIP);
+                                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_NONE_TIP, pageIndex);
                             } else {
-                                callback.onRequestFailed(keywords, result.getError());
+                                callback.onRequestFailed(keywords, result.getError(), pageIndex);
                             }
                             return;
                         }
                     } else if (result.getSearch() != null){
-                        callback.onRequestSucceed(keywords, result.getSearch());
+                        callback.onRequestSucceed(keywords, result.getSearch(), pageIndex);
                         return;
                     }
                 }
 
-                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_UNDEFINED);
+                callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_UNDEFINED, pageIndex);
             }
 
             @Override
@@ -132,7 +120,7 @@ public class HttpManager {
                 Log.e("ellison", "onFailure() stack:", t);
                 if (callback != null) {
                     // callback.onRequestFailed(keywords, t.getMessage());
-                    callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_NETWORK);
+                    callback.onRequestFailed(keywords, Constants.SEARCH_ERROR_NETWORK, pageIndex);
                 }
             }
         });

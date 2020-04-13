@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
+import com.ellison.eigakensaku.beans.Movie;
+import com.ellison.eigakensaku.beans.MovieList;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
@@ -80,5 +82,24 @@ public class Utils {
                 .cacheInMemory(true)
                 .cacheOnDisc()
                 .build();
+    }
+
+    public static MovieList makeFakeList() {
+        MovieList fake = new MovieList();
+
+        for (int i = 0; i < 10; i++) {
+            Movie movie = new Movie();
+            movie.setTitle("Harry Potter " + (i + 1));
+            if (i == 1 || i ==3) {
+                movie.setPoster("https://cn.bing.com/th?id=OIP.fkcuaLhZJevCj6ja5lpm1wHaJv&pid=Api&rs=1");
+            } else {
+                movie.setPoster("https://i.ebayimg.com/images/i/291520000466-0-1/s-l1000.jpg");
+            }
+            movie.setYear(String.valueOf(i + 2000));
+            movie.setType("Magical");
+            fake.add(movie);
+        }
+
+        return  fake;
     }
 }

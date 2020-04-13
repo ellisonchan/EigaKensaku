@@ -24,4 +24,8 @@
     <string name="text_rv_item_title_for_test">Harry Potter</string>
     <string name="text_rv_item_year_for_test">2016</string>
     <string name="text_rv_item_type_for_test">Magical</string>
+    <string name="text_rv_item_load_for_test">Loading</string>
+
+    <string name="text_rv_item_load">Loading more</string>
+    <string name="text_rv_item_load_end">No more results</string>
 </resources>

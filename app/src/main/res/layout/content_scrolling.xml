@@ -18,6 +18,7 @@
             android:id="@+id/rv_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            style="@style/ZoomItemRecyclerView_style"
             />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

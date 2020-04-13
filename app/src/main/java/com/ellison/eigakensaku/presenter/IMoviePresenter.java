@@ -1,5 +1,5 @@
 package com.ellison.eigakensaku.presenter;
 
 public interface IMoviePresenter {
-    void searchMovie(String keywords);
+    void searchMovie(String keywords, int pageIndex);
 }

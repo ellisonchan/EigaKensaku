@@ -17,4 +17,14 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ZoomItemRecyclerView_style">
+        <item name="android:scrollbarThumbVertical">@color/colorScrollBarThumb</item>
+        <item name="android:scrollbarTrackVertical">@color/colorScrollBarTrack</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:scrollbarSize">5dp</item>
+        <item name="android:overScrollMode">never</item>
+        <item name="android:scrollbars">vertical</item>
+        <item name="android:scrollbarStyle">insideOverlay</item>
+    </style>
 </resources>

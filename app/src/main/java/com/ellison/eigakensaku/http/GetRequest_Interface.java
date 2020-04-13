@@ -9,7 +9,9 @@ import retrofit2.http.Query;
 
 public interface GetRequest_Interface {
     @GET("http://omdbapi.com/")
-     Call<MovieSearchResponse<MovieList>> getCall(@Query("s")String keywords, @Query("apikey")String apikey);
+     Call<MovieSearchResponse<MovieList>> getCall(@Query("s")String keywords, @Query("page")int index, @Query("apikey")String apikey);
 //    Call<ResponseBody> getCall(@Query("s")String keywords, @Query("apikey")String apikey);
 
+    @GET("http://omdbapi.com/")
+    Call<MovieSearchResponse<MovieList>> getCall(@Query("s")String keywords, @Query("apikey")String apikey);
 }
