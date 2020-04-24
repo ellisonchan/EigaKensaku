@@ -18,6 +18,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
@@ -40,6 +42,7 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         SwipeRefreshLayout.OnRefreshListener,
         MovieAdapter.ILoadMoreListener {
 
+    private static final String TAG = "MovieSearchActivity";
     private String mKeywords;
     private IMoviePresenter mMoviePresenter;
     private MovieAdapter mMovieAdapter;
@@ -94,6 +97,10 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     @Override
     protected void onFabBtnClicked() {
+        if (!ensureKeywordNotNull()) {
+            return;
+        }
+
         // Start search operation.
         ((InputMethodManager) mSearchBox.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mSearchBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
@@ -111,6 +118,10 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
             ((InputMethodManager) mSearchBox.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                     .hideSoftInputFromWindow(mSearchBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+            if (!ensureKeywordNotNull()) {
+                return true;
+            }
 
             if (mFABtn.isEnabled()) {
                 searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
@@ -134,8 +145,26 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         updateFAButton(s.toString());
     }
 
+    private boolean ensureKeywordNotNull() {
+        if (mSearchBox == null || mSearchBox.getText() == null || mSearchBox.getText().toString().isEmpty()) {
+            Log.e(TAG, "Search operation blocked since no input keyword.");
+
+            if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
+                mRefreshLayout.post(()->mRefreshLayout.setRefreshing(false));
+            }
+
+            Toast.makeText(MovieSearchActivity.this, R.string.text_keyword_empty, Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public void onRefresh() {
+        if (!ensureKeywordNotNull()) {
+            return;
+        }
+
         if (mFABtn.isEnabled()) {
             if (mRefreshLayout != null) {
                 mRefreshLayout.post(()->mRefreshLayout.setRefreshing(true));

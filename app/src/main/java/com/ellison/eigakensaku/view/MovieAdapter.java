@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final String TAG = "MovieAdapter";
     private Context mContext;
     private MovieList mMovies;
     private ILoadMoreListener iLoadMoreListener;
@@ -160,15 +161,16 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                     if (layoutManager instanceof StaggeredGridLayoutManager) {
                         final int count = layoutManager.getItemCount();
-                        if (count == 1) { // no item, return
-                            Toast.makeText(mContext, R.string.text_keyword_empty, Toast.LENGTH_SHORT).show();
+                        if (count < ((StaggeredGridLayoutManager) layoutManager).getSpanCount()) {
+                            Log.e(TAG, "Current items' count less than span count.");
                             return;
                         }
                         int[] last = new int[count];
                         ((StaggeredGridLayoutManager) layoutManager).findLastCompletelyVisibleItemPositions(last);
 
                         if (last[0] == count - 1 && isSwipeUp && iLoadMoreListener != null) {
-                            iLoadMoreListener.onLoadMoreClicked(mCurrentPage + 1); // 执行加载更多逻辑
+                            // Do load more operation.
+                            iLoadMoreListener.onLoadMoreClicked(mCurrentPage + 1);
                             updateLoadingState(LoadMoreState.LOADING);
                             notifyDataSetChanged();
                         }

@@ -28,5 +28,5 @@
 
     <string name="text_rv_item_load">Loading more</string>
     <string name="text_rv_item_load_end">No more results</string>
-    <string name="text_keyword_empty">No Keyword, please input</string>
+    <string name="text_keyword_empty">Please enter a keyword.</string>
 </resources>
