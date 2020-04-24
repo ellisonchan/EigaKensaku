@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.ellison.eigakensaku.R;
 import com.ellison.eigakensaku.application.MovieApplication;
@@ -159,11 +160,15 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                     if (layoutManager instanceof StaggeredGridLayoutManager) {
                         final int count = layoutManager.getItemCount();
+                        if (count == 1) { // no item, return
+                            Toast.makeText(mContext, R.string.text_keyword_empty, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         int[] last = new int[count];
                         ((StaggeredGridLayoutManager) layoutManager).findLastCompletelyVisibleItemPositions(last);
 
                         if (last[0] == count - 1 && isSwipeUp && iLoadMoreListener != null) {
-                            iLoadMoreListener.onLoadMoreClicked(mCurrentPage + 1);
+                            iLoadMoreListener.onLoadMoreClicked(mCurrentPage + 1); // 执行加载更多逻辑
                             updateLoadingState(LoadMoreState.LOADING);
                             notifyDataSetChanged();
                         }
