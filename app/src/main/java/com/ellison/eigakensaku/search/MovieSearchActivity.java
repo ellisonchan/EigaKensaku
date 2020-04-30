@@ -1,8 +1,10 @@
 package com.ellison.eigakensaku.search;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 
-import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.presenter.IMoviePresenter;
 import com.ellison.eigakensaku.presenter.MoviePresenter;
@@ -15,21 +17,26 @@ import com.ellison.eigakensaku.view.MovieAdapter;
 import com.ellison.eigakensaku.view.MovieItemDecoration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.os.Handler;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -80,6 +87,9 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         mMoviePresenter = new MoviePresenter(this);
 
         initRecyclerView();
+
+        mFABtn.getDrawable().setAlpha(100);
+        mFABtn.setClickable(false);
     }
 
     private void initRecyclerView() {
@@ -97,6 +107,8 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     @Override
     protected void onFabBtnClicked() {
+        showClickedAnimator(mFABtn);
+
         if (!ensureKeywordNotNull()) {
             return;
         }
@@ -105,6 +117,70 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         ((InputMethodManager) mSearchBox.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mSearchBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
+    }
+
+    private void showClickableAnimator(FloatingActionButton view, boolean isClickable) {
+        // init scale animator
+        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.03f, 1.0f);
+        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.03f, 1.0f);
+        ObjectAnimator alphaAnimator;
+        ColorStateList colorStateList;
+
+        if (isClickable) {
+            // enabled drawable and clear alpha
+            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", 100, 255);
+            colorStateList = ContextCompat.getColorStateList(getApplicationContext(), R.color.colorAccent);
+
+            // enable
+            view.setOnClickListener(MovieSearchActivity.this);
+        } else {
+            // disabled drawable and not clear alpha
+            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", 255, 100);
+            colorStateList = ContextCompat.getColorStateList(getApplicationContext(), R.color.cardview_dark_background);
+
+            // disable
+            view.setClickable(false);
+        }
+
+        // play scale and alpha animator
+        AnimatorSet set = new AnimatorSet();
+        set.setInterpolator(isClickable ? new DecelerateInterpolator() : new AccelerateInterpolator());
+        set.setDuration(isClickable ? 1000 : 300);
+        set.playTogether(xAnimator, yAnimator, alphaAnimator);
+        set.start();
+
+        // update background color
+        view.setBackgroundTintMode(PorterDuff.Mode.SRC_ATOP);
+        view.setBackgroundTintList(colorStateList);
+    }
+
+    private void showClickedAnimator(FloatingActionButton view) {
+        final int width = view.getDrawable().getBounds().width();
+        final int height = view.getDrawable().getBounds().height();
+        final int left = view.getDrawable().getBounds().left;
+        final int top = view.getDrawable().getBounds().top;
+        final int right = view.getDrawable().getBounds().right;
+        final int bottom = view.getDrawable().getBounds().bottom;
+
+        // resource drawable scale animator
+        ValueAnimator scaleDrawableAnimator = ValueAnimator.ofFloat(1.0f, 1.1f, 1.0f);
+        scaleDrawableAnimator.addUpdateListener(animation -> {
+            final float drawableProgress = (float) animation.getAnimatedValue() - 1.0f;
+            int newLeft = left - (int) (width * drawableProgress);
+            int newTop = top - (int) (height * drawableProgress);
+            int newRight = right + (int) (width * drawableProgress);
+            int newBottom = bottom + (int) (height * drawableProgress);
+
+            view.getDrawable().setBounds(newLeft, newTop, newRight, newBottom);
+        });
+
+        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f);
+        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f);
+        AnimatorSet set = new AnimatorSet();
+        set.setInterpolator(new DecelerateInterpolator());
+        set.setDuration(1000);
+        set.playTogether(xAnimator, yAnimator, scaleDrawableAnimator);
+        set.start();
     }
 
     @Override
@@ -142,7 +218,6 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     @Override
     public void afterTextChanged(Editable s) {
-        updateFAButton(s.toString());
     }
 
     private boolean ensureKeywordNotNull() {
@@ -176,6 +251,12 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     }
 
     public void onLoadMoreClicked(int moreIndex) {
+        if (!ensureKeywordNotNull()) {
+            new Handler().postDelayed(
+                    () -> mMovieAdapter.updateMovies(null, true), 300);
+            return;
+        }
+
         searchMovieRequest(moreIndex);
     }
 
@@ -199,11 +280,15 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     private void updateFAButton(String string) {
         if(string != null && !string.isEmpty()) {
-            mFABtn.setEnabled(true);
+            if (mKeywords == null || mKeywords.isEmpty()) {
+                showClickableAnimator(mFABtn, true);
+            }
         } else {
-            mFABtn.setEnabled(false);
+            if (mKeywords != null && !mKeywords.isEmpty()) {
+                showClickableAnimator(mFABtn, false);
+            }
         }
-        mKeywords =string;
+        mKeywords = string;
     }
 
     private void searchMovieRequest(int pageIndex) {

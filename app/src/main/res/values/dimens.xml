@@ -1,5 +1,7 @@
 <resources>
     <dimen name="app_bar_height">120dp</dimen>
+    <dimen name="fab_width">55dp</dimen>
+    <dimen name="fab_height">55dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
@@ -7,8 +9,8 @@
 
     <dimen name="rv_item_post_radius">6dp</dimen>
 
-    <dimen name="rv_item_post_width">150dp</dimen>
-    <dimen name="rv_item_post_height">190dp</dimen>
+    <dimen name="rv_item_post_width">140dp</dimen>
+    <dimen name="rv_item_post_height">165dp</dimen>
 
     <dimen name="rv_item_title_size">15sp</dimen>
     <dimen name="rv_item_year_size">13sp</dimen>

@@ -50,6 +50,7 @@
                 android:hint="@string/edittext_hint"
                 android:singleLine="true"
                 android:ellipsize="end"
+                android:imeOptions="actionSearch"
                 android:background="@android:drawable/editbox_background_normal"
                 android:textColor="@android:color/background_dark"
                 android:textColorHint="@android:color/darker_gray" />
@@ -75,13 +76,15 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/fab_width"
+        android:layout_height="@dimen/fab_height"
         android:layout_marginRight="@dimen/fab_margin"
         android:enabled="false"
+        app:backgroundTint="@color/cardview_dark_background"
         app:layout_anchor="@id/app_bar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_menu_search" />
+        app:srcCompat="@android:drawable/ic_menu_search"
+        app:rippleColor="@color/design_default_color_primary"/>
     <include layout="@layout/content_scrolling_swipe" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

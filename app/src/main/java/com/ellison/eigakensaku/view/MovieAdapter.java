@@ -107,7 +107,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder instanceof MovieHolder) {
             Movie movie = mMovies.get(position);
             MovieHolder movieHolder = (MovieHolder) holder;
-            //Log.e("ellison2020", "Movie[" + position + "]:" + movie);
+            Log.d("ellison2020", "Movie[" + position + "]:" + movie);
 
             // Show title
             movieHolder.title.setText(movie.getTitle());
@@ -128,14 +128,17 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             LoadingHodler loadingHodler = (LoadingHodler) holder;
             switch (mState) {
                 case LOADING:
+                    Log.d("edison", "LOADING VISIBLE & VISIBLE");
                     loadingHodler.itemView.setVisibility(View.VISIBLE);
                     loadingHodler.progressbar.setVisibility(View.VISIBLE);
                     loadingHodler.loadingdes.setText(R.string.text_rv_item_load);
                     break;
                 case COMPLETED:
+                    Log.d("edison", "COMPLETED INVISIBLE");
                     loadingHodler.itemView.setVisibility(View.INVISIBLE);
                     break;
                 case END:
+                    Log.d("edison", "END VISIBLE & GONE");
                     loadingHodler.itemView.setVisibility(View.VISIBLE);
                     loadingHodler.progressbar.setVisibility(View.GONE);
                     loadingHodler.loadingdes.setText(R.string.text_rv_item_load_end);
