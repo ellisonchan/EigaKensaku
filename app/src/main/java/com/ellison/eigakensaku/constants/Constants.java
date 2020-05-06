@@ -27,4 +27,20 @@ public class Constants {
     public static final int TYPE_RV_LOAD = 2;
 
     public static final int GET_REQUEST_NO_PAGE_INDEX = 0;
+
+    public static final int COLOR_TINT_FAB_DISABLE = 0xff424242;
+    public static final int COLOR_TINT_FAB_ENABLE = 0xff03dac5;
+//    public static final int COLOR_TINT_FAB_DISABLE = -12434878;
+//    public static final int COLOR_TINT_FAB_ENABLE = -16524603;
+
+    public static final int ALPHA_FAB_DISABLE = 100;
+    public static final int ALPHA_FAB_ENABLE = 255;
+
+    public static final int DURATION_FAB_DISABLE = 400;
+    public static final int DURATION_FAB_ENABLE = 1000;
+    public static final int DURATION_FAB_CLICKED = 1000;
+
+    public static final float SCALE_FAB_NORMAL = 1.0f;
+    public static final float SCALE_FAB_CLICKABLE = 1.03f;
+    public static final float SCALE_FAB_CLICKED = 1.1f;
 }

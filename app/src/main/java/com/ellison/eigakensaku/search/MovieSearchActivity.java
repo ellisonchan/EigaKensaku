@@ -36,7 +36,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -88,7 +87,7 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
         initRecyclerView();
 
-        mFABtn.getDrawable().setAlpha(100);
+        mFABtn.getDrawable().setAlpha(Constants.ALPHA_FAB_DISABLE);
         mFABtn.setClickable(false);
     }
 
@@ -121,22 +120,24 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     private void showClickableAnimator(FloatingActionButton view, boolean isClickable) {
         // init scale animator
-        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.03f, 1.0f);
-        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.03f, 1.0f);
+        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKABLE, Constants.SCALE_FAB_NORMAL);
+        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKABLE, Constants.SCALE_FAB_NORMAL);
         ObjectAnimator alphaAnimator;
-        ColorStateList colorStateList;
+        ValueAnimator colorAnimator;
 
         if (isClickable) {
             // enabled drawable and clear alpha
-            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", 100, 255);
-            colorStateList = ContextCompat.getColorStateList(getApplicationContext(), R.color.colorAccent);
+            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", Constants.ALPHA_FAB_DISABLE, Constants.ALPHA_FAB_ENABLE);
+            // need argb color
+            colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_TINT_FAB_DISABLE, Constants.COLOR_TINT_FAB_ENABLE);
 
             // enable
             view.setOnClickListener(MovieSearchActivity.this);
         } else {
             // disabled drawable and not clear alpha
-            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", 255, 100);
-            colorStateList = ContextCompat.getColorStateList(getApplicationContext(), R.color.cardview_dark_background);
+            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", Constants.ALPHA_FAB_ENABLE, Constants.ALPHA_FAB_DISABLE);
+            // need argb color
+            colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_TINT_FAB_ENABLE, Constants.COLOR_TINT_FAB_DISABLE);
 
             // disable
             view.setClickable(false);
@@ -145,13 +146,18 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         // play scale and alpha animator
         AnimatorSet set = new AnimatorSet();
         set.setInterpolator(isClickable ? new DecelerateInterpolator() : new AccelerateInterpolator());
-        set.setDuration(isClickable ? 1000 : 300);
-        set.playTogether(xAnimator, yAnimator, alphaAnimator);
+        set.setDuration(isClickable ? Constants.DURATION_FAB_ENABLE : Constants.DURATION_FAB_DISABLE);
+        set.playTogether(xAnimator, yAnimator, alphaAnimator, colorAnimator);
         set.start();
 
         // update background color
-        view.setBackgroundTintMode(PorterDuff.Mode.SRC_ATOP);
-        view.setBackgroundTintList(colorStateList);
+        colorAnimator.addUpdateListener(animation -> {
+            int color = (int) animation.getAnimatedValue();
+            // ColorStateList colorStateList = ContextCompat.getColorStateList(getApplicationContext(), R.color.colorAccent);
+            ColorStateList colorStateList = ColorStateList.valueOf(color);
+            view.setBackgroundTintMode(PorterDuff.Mode.SRC_ATOP);
+            view.setBackgroundTintList(colorStateList);
+        });
     }
 
     private void showClickedAnimator(FloatingActionButton view) {
@@ -163,9 +169,9 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         final int bottom = view.getDrawable().getBounds().bottom;
 
         // resource drawable scale animator
-        ValueAnimator scaleDrawableAnimator = ValueAnimator.ofFloat(1.0f, 1.1f, 1.0f);
+        ValueAnimator scaleDrawableAnimator = ValueAnimator.ofFloat(Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKED, Constants.SCALE_FAB_NORMAL);
         scaleDrawableAnimator.addUpdateListener(animation -> {
-            final float drawableProgress = (float) animation.getAnimatedValue() - 1.0f;
+            final float drawableProgress = (float) animation.getAnimatedValue() - Constants.SCALE_FAB_NORMAL;
             int newLeft = left - (int) (width * drawableProgress);
             int newTop = top - (int) (height * drawableProgress);
             int newRight = right + (int) (width * drawableProgress);
@@ -174,11 +180,11 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
             view.getDrawable().setBounds(newLeft, newTop, newRight, newBottom);
         });
 
-        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f);
-        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f);
+        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKED, Constants.SCALE_FAB_NORMAL);
+        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKED, Constants.SCALE_FAB_NORMAL);
         AnimatorSet set = new AnimatorSet();
         set.setInterpolator(new DecelerateInterpolator());
-        set.setDuration(1000);
+        set.setDuration(Constants.DURATION_FAB_CLICKED);
         set.playTogether(xAnimator, yAnimator, scaleDrawableAnimator);
         set.start();
     }
