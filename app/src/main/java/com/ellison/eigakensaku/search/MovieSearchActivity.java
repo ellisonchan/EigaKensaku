@@ -1,10 +1,11 @@
 package com.ellison.eigakensaku.search;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 
+import com.ellison.eigakensaku.animator.AnimatorShowerImplement;
+import com.ellison.eigakensaku.animator.AnimatorType;
+import com.ellison.eigakensaku.animator.IAnimatorShower;
+import com.ellison.eigakensaku.animator.IAnimatorCallback;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.presenter.IMoviePresenter;
 import com.ellison.eigakensaku.presenter.MoviePresenter;
@@ -17,8 +18,6 @@ import com.ellison.eigakensaku.view.MovieAdapter;
 import com.ellison.eigakensaku.view.MovieItemDecoration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.os.Handler;
@@ -28,8 +27,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -46,16 +43,17 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         EditText.OnEditorActionListener,
         TextWatcher,
         SwipeRefreshLayout.OnRefreshListener,
+        IAnimatorCallback,
         MovieAdapter.ILoadMoreListener {
 
     private static final String TAG = "MovieSearchActivity";
     private String mKeywords;
     private IMoviePresenter mMoviePresenter;
     private MovieAdapter mMovieAdapter;
+    private IAnimatorShower mAnimator;
 
     @BindView(R.id.search_box)
     EditText mSearchBox;
-    //    MovieSearchBox mSearchBox;
 
     @BindView(R.id.fab)
     FloatingActionButton mFABtn;
@@ -89,6 +87,8 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
         mFABtn.getDrawable().setAlpha(Constants.ALPHA_FAB_DISABLE);
         mFABtn.setClickable(false);
+
+        mAnimator = new AnimatorShowerImplement();
     }
 
     private void initRecyclerView() {
@@ -105,8 +105,16 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     }
 
     @Override
+    public void onAnimationStart() {
+    }
+
+    @Override
+    public void onAnimationEnd() {
+    }
+
+    @Override
     protected void onFabBtnClicked() {
-        showClickedAnimator(mFABtn);
+        mAnimator.showAnimator(mFABtn, AnimatorType.CLICKED, this);
 
         if (!ensureKeywordNotNull()) {
             return;
@@ -116,77 +124,6 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         ((InputMethodManager) mSearchBox.getContext().getSystemService(Context.INPUT_METHOD_SERVICE))
                 .hideSoftInputFromWindow(mSearchBox.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
-    }
-
-    private void showClickableAnimator(FloatingActionButton view, boolean isClickable) {
-        // init scale animator
-        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKABLE, Constants.SCALE_FAB_NORMAL);
-        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKABLE, Constants.SCALE_FAB_NORMAL);
-        ObjectAnimator alphaAnimator;
-        ValueAnimator colorAnimator;
-
-        if (isClickable) {
-            // enabled drawable and clear alpha
-            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", Constants.ALPHA_FAB_DISABLE, Constants.ALPHA_FAB_ENABLE);
-            // need argb color
-            colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_TINT_FAB_DISABLE, Constants.COLOR_TINT_FAB_ENABLE);
-
-            // enable
-            view.setOnClickListener(MovieSearchActivity.this);
-        } else {
-            // disabled drawable and not clear alpha
-            alphaAnimator = ObjectAnimator.ofInt(view.getDrawable(), "alpha", Constants.ALPHA_FAB_ENABLE, Constants.ALPHA_FAB_DISABLE);
-            // need argb color
-            colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_TINT_FAB_ENABLE, Constants.COLOR_TINT_FAB_DISABLE);
-
-            // disable
-            view.setClickable(false);
-        }
-
-        // play scale and alpha animator
-        AnimatorSet set = new AnimatorSet();
-        set.setInterpolator(isClickable ? new DecelerateInterpolator() : new AccelerateInterpolator());
-        set.setDuration(isClickable ? Constants.DURATION_FAB_ENABLE : Constants.DURATION_FAB_DISABLE);
-        set.playTogether(xAnimator, yAnimator, alphaAnimator, colorAnimator);
-        set.start();
-
-        // update background color
-        colorAnimator.addUpdateListener(animation -> {
-            int color = (int) animation.getAnimatedValue();
-            // ColorStateList colorStateList = ContextCompat.getColorStateList(getApplicationContext(), R.color.colorAccent);
-            ColorStateList colorStateList = ColorStateList.valueOf(color);
-            view.setBackgroundTintMode(PorterDuff.Mode.SRC_ATOP);
-            view.setBackgroundTintList(colorStateList);
-        });
-    }
-
-    private void showClickedAnimator(FloatingActionButton view) {
-        final int width = view.getDrawable().getBounds().width();
-        final int height = view.getDrawable().getBounds().height();
-        final int left = view.getDrawable().getBounds().left;
-        final int top = view.getDrawable().getBounds().top;
-        final int right = view.getDrawable().getBounds().right;
-        final int bottom = view.getDrawable().getBounds().bottom;
-
-        // resource drawable scale animator
-        ValueAnimator scaleDrawableAnimator = ValueAnimator.ofFloat(Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKED, Constants.SCALE_FAB_NORMAL);
-        scaleDrawableAnimator.addUpdateListener(animation -> {
-            final float drawableProgress = (float) animation.getAnimatedValue() - Constants.SCALE_FAB_NORMAL;
-            int newLeft = left - (int) (width * drawableProgress);
-            int newTop = top - (int) (height * drawableProgress);
-            int newRight = right + (int) (width * drawableProgress);
-            int newBottom = bottom + (int) (height * drawableProgress);
-
-            view.getDrawable().setBounds(newLeft, newTop, newRight, newBottom);
-        });
-
-        ObjectAnimator xAnimator = ObjectAnimator.ofFloat(view, "scaleX", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKED, Constants.SCALE_FAB_NORMAL);
-        ObjectAnimator yAnimator = ObjectAnimator.ofFloat(view, "scaleY", Constants.SCALE_FAB_NORMAL, Constants.SCALE_FAB_CLICKED, Constants.SCALE_FAB_NORMAL);
-        AnimatorSet set = new AnimatorSet();
-        set.setInterpolator(new DecelerateInterpolator());
-        set.setDuration(Constants.DURATION_FAB_CLICKED);
-        set.playTogether(xAnimator, yAnimator, scaleDrawableAnimator);
-        set.start();
     }
 
     @Override
@@ -287,11 +224,11 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     private void updateFAButton(String string) {
         if(string != null && !string.isEmpty()) {
             if (mKeywords == null || mKeywords.isEmpty()) {
-                showClickableAnimator(mFABtn, true);
+                mAnimator.showAnimator(mFABtn, AnimatorType.CLICKABLE, this);
             }
         } else {
             if (mKeywords != null && !mKeywords.isEmpty()) {
-                showClickableAnimator(mFABtn, false);
+                mAnimator.showAnimator(mFABtn, AnimatorType.UNCLICKABLE, this);
             }
         }
         mKeywords = string;
@@ -300,17 +237,6 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     private void searchMovieRequest(int pageIndex) {
         if (mMoviePresenter != null) {
             mMoviePresenter.searchMovie(mKeywords, pageIndex);
-//            // for test
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // Test load finish
-//                    // showResult(Utils.makeFakeList(), pageIndex);
-//
-//                    // Test load to end
-//                    showResult(new MovieList(), pageIndex);
-//                }
-//            }, 3000);
         }
     };
 
