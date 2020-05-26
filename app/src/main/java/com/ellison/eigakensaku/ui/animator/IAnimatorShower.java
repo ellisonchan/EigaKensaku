@@ -1,4 +1,4 @@
-package com.ellison.eigakensaku.animator;
+package com.ellison.eigakensaku.ui.animator;
 
 import android.view.View;
 

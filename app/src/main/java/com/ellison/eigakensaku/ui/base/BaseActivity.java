@@ -1,4 +1,4 @@
-package com.ellison.eigakensaku.base;
+package com.ellison.eigakensaku.ui.base;
 
 import android.os.Bundle;
 

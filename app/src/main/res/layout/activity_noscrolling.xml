@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
     android:background="@color/colorSwipeRefreshBg"
-    tools:context=".search.MovieSearchActivity">
+    tools:context=".ui.search.MovieSearchActivity">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar"

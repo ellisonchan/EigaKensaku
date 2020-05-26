@@ -1,21 +1,21 @@
-package com.ellison.eigakensaku.search;
+package com.ellison.eigakensaku.ui.search;
 
 import android.content.Context;
 
-import com.ellison.eigakensaku.animator.AnimatorShowerImplement;
-import com.ellison.eigakensaku.animator.AnimatorType;
-import com.ellison.eigakensaku.animator.IAnimatorShower;
-import com.ellison.eigakensaku.animator.IAnimatorCallback;
+import com.ellison.eigakensaku.ui.animator.AnimatorShowerImplement;
+import com.ellison.eigakensaku.ui.animator.AnimatorType;
+import com.ellison.eigakensaku.ui.animator.IAnimatorShower;
+import com.ellison.eigakensaku.ui.animator.IAnimatorCallback;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.presenter.IMoviePresenter;
 import com.ellison.eigakensaku.presenter.MoviePresenter;
 import com.ellison.eigakensaku.utils.Utils;
-import com.ellison.eigakensaku.view.IMovieView;
+import com.ellison.eigakensaku.ui.view.IMovieView;
 import com.ellison.eigakensaku.R;
-import com.ellison.eigakensaku.base.BaseActivity;
+import com.ellison.eigakensaku.ui.base.BaseActivity;
 import com.ellison.eigakensaku.beans.MovieList;
-import com.ellison.eigakensaku.view.MovieAdapter;
-import com.ellison.eigakensaku.view.MovieItemDecoration;
+import com.ellison.eigakensaku.ui.view.MovieAdapter;
+import com.ellison.eigakensaku.ui.view.MovieItemDecoration;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.text.Editable;

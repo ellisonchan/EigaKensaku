@@ -1,4 +1,4 @@
-package com.ellison.eigakensaku.view;
+package com.ellison.eigakensaku.ui.view;
 
 import android.view.View;
 import android.widget.ImageView;

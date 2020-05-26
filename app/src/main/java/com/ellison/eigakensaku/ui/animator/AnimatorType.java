@@ -1,4 +1,4 @@
-package com.ellison.eigakensaku.animator;
+package com.ellison.eigakensaku.ui.animator;
 
 public enum AnimatorType {
     CLICKABLE,

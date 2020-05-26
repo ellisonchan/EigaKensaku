@@ -2,12 +2,11 @@ package com.ellison.eigakensaku.model;
 
 import android.util.Log;
 
-import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
-import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.http.HttpManager;
 import com.ellison.eigakensaku.http.IMovieRequestCallback;
 import com.ellison.eigakensaku.presenter.IMovieListener;
+import com.ellison.eigakensaku.subscribers.MovieSearcheSubscribers;
 
 public class MovieModel implements IMovieModel, IMovieRequestCallback {
     private final IMovieListener mMovieListener;
@@ -18,7 +17,9 @@ public class MovieModel implements IMovieModel, IMovieRequestCallback {
 
     @Override
     public void searchMovie(String keywords, int pageIndex) {
-        HttpManager.getInstance().requestMovieList(keywords, pageIndex, Constants.OMDB_URL, this);
+        Log.d("ellison", "searchMovie() keywords:" + keywords + " pageIndex:" + pageIndex);
+        HttpManager.getInstance().requestMovieList(keywords, pageIndex, new MovieSearcheSubscribers(mMovieListener, keywords, pageIndex));
+        // HttpManager.getInstance().requestMovieList(keywords, pageIndex, this);
     }
 
     @Override

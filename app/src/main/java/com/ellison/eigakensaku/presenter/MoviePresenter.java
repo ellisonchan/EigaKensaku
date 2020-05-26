@@ -3,7 +3,7 @@ package com.ellison.eigakensaku.presenter;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.model.IMovieModel;
 import com.ellison.eigakensaku.model.MovieModel;
-import com.ellison.eigakensaku.view.IMovieView;
+import com.ellison.eigakensaku.ui.view.IMovieView;
 import com.ellison.eigakensaku.beans.MovieList;
 
 public class MoviePresenter implements IMoviePresenter, IMovieListener {

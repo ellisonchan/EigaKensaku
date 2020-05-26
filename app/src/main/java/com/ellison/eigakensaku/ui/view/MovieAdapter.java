@@ -1,11 +1,10 @@
-package com.ellison.eigakensaku.view;
+package com.ellison.eigakensaku.ui.view;
 
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.ellison.eigakensaku.R;
 import com.ellison.eigakensaku.application.MovieApplication;
@@ -13,12 +12,9 @@ import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.debug.ImageLoadCallback;
-import com.ellison.eigakensaku.utils.EllisonImageDisplayer;
 import com.ellison.eigakensaku.utils.Utils;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 

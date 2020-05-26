@@ -20,18 +20,16 @@ public class HttpManagerTest {
     public void testRequestSearch() {
         HttpManager httpManager = HttpManager.getInstance();
 
-        httpManager.requestMovieList("harry potter", Constants.OMDB_URL, new IMovieRequestCallback() {
+        httpManager.requestMovieList("harry potter", 0, new IMovieRequestCallback() {
             @Override
-            public void onRequestSucceed(String keywords, MovieList list) {
+            public void onRequestSucceed(String keywords, MovieList list, int pageIndex) {
                 System.out.println("ellison list:" + list);
                 Assert.assertNotNull(list);
             }
 
             @Override
-            public void onRequestFailed(String keywords, String errorInfo) {
+            public void onRequestFailed(String keywords, String errorInfo, int pageIndex) {
             }
         });
-
-
     }
 }
