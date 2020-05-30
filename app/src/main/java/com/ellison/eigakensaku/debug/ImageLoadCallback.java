@@ -1,7 +1,6 @@
 package com.ellison.eigakensaku.debug;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.view.View;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;

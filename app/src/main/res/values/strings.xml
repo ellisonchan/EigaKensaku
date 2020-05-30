@@ -29,4 +29,6 @@
     <string name="text_rv_item_load">Loading more</string>
     <string name="text_rv_item_load_end">No more results</string>
     <string name="text_keyword_empty">Please enter a keyword.</string>
+
+    <string name="post_cd" translatable="false">Movie post</string>
 </resources>

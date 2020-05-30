@@ -24,12 +24,7 @@ public class Utils {
         if (!((Activity) context).isFinishing()) {
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setMessage(message)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok, (dialog1, which) -> dialog1.dismiss())
                     .create();
             dialog.setCancelable(true);
             dialog.setCanceledOnTouchOutside(true);
@@ -101,5 +96,9 @@ public class Utils {
         }
 
         return  fake;
+    }
+
+    public static void recycleProgressDialog() {
+        mProgressDialog = null;
     }
 }

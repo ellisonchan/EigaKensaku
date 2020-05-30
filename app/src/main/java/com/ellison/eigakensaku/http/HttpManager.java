@@ -14,11 +14,10 @@ import rx.schedulers.Schedulers;
 
 public class HttpManager {
     private static HttpManager mInstance;
-    private final Retrofit retrofit;
     private final MovieRequestService movieInterface;
 
     private HttpManager() {
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.OMDB_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())

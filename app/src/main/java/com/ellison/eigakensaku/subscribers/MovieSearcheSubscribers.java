@@ -43,16 +43,21 @@ public class MovieSearcheSubscribers extends Subscriber<MovieSearchResponse<Movi
         }
 
         if (movieListMovieSearchResponse.getResponse() !=null) {
-            if (!Boolean.valueOf(movieListMovieSearchResponse.getResponse())) {
+            if (!Boolean.parseBoolean(movieListMovieSearchResponse.getResponse())) {
                 if (movieListMovieSearchResponse.getError() != null && !movieListMovieSearchResponse.getError().isEmpty()) {
-                    if (Constants.SEARCH_ERROR_RESULT_LARGE.equals(movieListMovieSearchResponse.getError())) {
-                        movieListener.onMovieFailed(keywords, Constants.SEARCH_ERROR_RESULT_LARGE_TIP, pageIndex);
-                    } else if (Constants.SEARCH_ERROR_RESULT_KEY_INVALID.equals(movieListMovieSearchResponse.getError())) {
-                        movieListener.onMovieFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_INVALID_TIP, pageIndex);
-                    } else if (Constants.SEARCH_ERROR_RESULT_KEY_NONE.equals(movieListMovieSearchResponse.getError())) {
-                        movieListener.onMovieFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_NONE_TIP, pageIndex);
-                    } else {
-                        movieListener.onMovieFailed(keywords, movieListMovieSearchResponse.getError(), pageIndex);
+                    switch (movieListMovieSearchResponse.getError()) {
+                        case Constants.SEARCH_ERROR_RESULT_LARGE:
+                            movieListener.onMovieFailed(keywords, Constants.SEARCH_ERROR_RESULT_LARGE_TIP, pageIndex);
+                            break;
+                        case Constants.SEARCH_ERROR_RESULT_KEY_INVALID:
+                            movieListener.onMovieFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_INVALID_TIP, pageIndex);
+                            break;
+                        case Constants.SEARCH_ERROR_RESULT_KEY_NONE:
+                            movieListener.onMovieFailed(keywords, Constants.SEARCH_ERROR_RESULT_KEY_NONE_TIP, pageIndex);
+                            break;
+                        default:
+                            movieListener.onMovieFailed(keywords, movieListMovieSearchResponse.getError(), pageIndex);
+                            break;
                     }
                     return;
                 }

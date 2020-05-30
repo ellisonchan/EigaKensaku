@@ -285,4 +285,10 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
             Utils.showAlertDialog(this, errorMsg);
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.recycleProgressDialog();
+    }
 }

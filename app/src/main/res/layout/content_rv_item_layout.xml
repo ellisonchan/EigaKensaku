@@ -19,6 +19,7 @@
         android:scaleType="fitXY"
         android:adjustViewBounds="true"
         android:src="@drawable/rv_tem_post_for_test"
+        android:contentDescription="@string/post_cd"
         tools:srcCompat="@drawable/rv_tem_post_for_test" />
 
     <LinearLayout

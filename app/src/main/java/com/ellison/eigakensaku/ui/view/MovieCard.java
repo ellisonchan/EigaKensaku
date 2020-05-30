@@ -3,8 +3,6 @@ package com.ellison.eigakensaku.ui.view;
 import android.content.Context;
 import android.util.AttributeSet;
 
-import com.ellison.eigakensaku.R;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;

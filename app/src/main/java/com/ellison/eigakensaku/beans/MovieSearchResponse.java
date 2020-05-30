@@ -44,7 +44,14 @@ public class MovieSearchResponse<T> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("");
-        sb.append("Result(totalResults:" + totalResults + ";Response:" + Response + ";Error:" + Error + ";List:" + Search);
+        sb.append("Result(totalResults:")
+                .append(totalResults)
+                .append(";Response:")
+                .append(Response)
+                .append(";Error:")
+                .append(Error)
+                .append(";List:")
+                .append(Search);
         return sb.toString();
     }
 

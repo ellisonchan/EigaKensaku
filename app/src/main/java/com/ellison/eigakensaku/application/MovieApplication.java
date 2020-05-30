@@ -4,21 +4,37 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class MovieApplication extends Application {
     private static ImageLoader mImageLoader;
+    private RefWatcher refWatcher;
 
     @Override
     public void onCreate() {
         super.onCreate();
         registerActivityLifecycleCallbacks(new EveryActivityLifecycleCallbacks());
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        refWatcher = installLeakCanary();
+    }
+
+    public static RefWatcher getRefWatcher(Context context) {
+        MovieApplication application = (MovieApplication) context.getApplicationContext();
+        return application.refWatcher;
+    }
+
+    protected RefWatcher installLeakCanary() {
+        return RefWatcher.DISABLED;
     }
 
     public static ImageLoader getImageLoader(@NonNull Context context) {

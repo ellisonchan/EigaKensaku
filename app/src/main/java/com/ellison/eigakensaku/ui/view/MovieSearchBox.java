@@ -2,7 +2,6 @@ package com.ellison.eigakensaku.ui.view;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.widget.EditText;
 
 import androidx.appcompat.widget.AppCompatEditText;
 

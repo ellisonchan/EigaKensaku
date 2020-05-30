@@ -33,7 +33,7 @@ public class DisplayFromDisk {
     private File getCacheDir(Context context, final String dir) {
         Log.e("ellison2021", "context.getExternalCacheDir():" + context.getExternalCacheDir());
         Log.e("ellison2021", "context.getCacheDir():" + context.getCacheDir());
-        Log.e("ellison2021", "context.getExternalStorageDirectory():" + Environment.getExternalStorageDirectory());
+//        Log.e("ellison2021", "context.getExternalStorageDirectory():" + Environment.getExternalStorageDirectory());
 
         final String path = Environment.getExternalStorageState() == Environment.MEDIA_MOUNTED ? context.getExternalCacheDir().getPath() : context.getCacheDir().getPath();
         return new File(path + File.separator + dir);

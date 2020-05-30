@@ -51,7 +51,15 @@ public class Movie {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("");
-        sb.append("Movie(title:" + Title + ";postUrl:" + Poster + ";year:" + Year + ";type:" + Type + ")");
+        sb.append("Movie(title:")
+                .append(Title)
+                .append(";postUrl:")
+                .append(Poster)
+                .append(";year:")
+                .append(Year)
+                .append(";type:")
+                .append(Type)
+                .append(")");
         return sb.toString();
     }
 

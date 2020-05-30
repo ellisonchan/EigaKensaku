@@ -1,7 +1,6 @@
 package com.ellison.eigakensaku;
 
 import com.ellison.eigakensaku.beans.MovieList;
-import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.http.HttpManager;
 import com.ellison.eigakensaku.http.IMovieRequestCallback;
 
