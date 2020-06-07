@@ -92,6 +92,7 @@ public class Utils {
             }
             movie.setYear(String.valueOf(i + 2000));
             movie.setType("Magical");
+            movie.setID("tt0098635");
             fake.add(movie);
         }
 

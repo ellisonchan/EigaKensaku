@@ -14,6 +14,8 @@ public class Movie {
     private String Year;
     @SerializedName("Type")
     private String Type;
+    @SerializedName("imdbID")
+    private String ID;
 
     public String getTitle() {
         return Title;
@@ -47,19 +49,29 @@ public class Movie {
         this.Type = type;
     }
 
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
     @NonNull
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("");
-        sb.append("Movie(title:")
+        sb.append("Movie[title:")
                 .append(Title)
-                .append(";postUrl:")
+                .append(", postUrl:")
                 .append(Poster)
-                .append(";year:")
+                .append(", year:")
                 .append(Year)
-                .append(";type:")
+                .append(", type:")
                 .append(Type)
-                .append(")");
+                .append(", imdb:")
+                .append(ID)
+                .append("]");
         return sb.toString();
     }
 
@@ -72,8 +84,9 @@ public class Movie {
         if (obj instanceof Movie) {
             Movie temp = (Movie) obj;
 
-            if (temp.getTitle() != null && temp.getTitle().equals(getTitle())
-                    && temp.getPoster() != null && temp.getPoster().equals(getPoster())) {
+            if ((temp.getID() != null && temp.getID().equals(getID()))
+                    || (temp.getTitle() != null && temp.getTitle().equals(getTitle())
+                            && temp.getPoster() != null && temp.getPoster().equals(getPoster()))) {
                 return true;
             }
         }

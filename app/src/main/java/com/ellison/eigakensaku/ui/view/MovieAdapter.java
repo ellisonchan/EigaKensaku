@@ -6,20 +6,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.ellison.eigakensaku.R;
-import com.ellison.eigakensaku.application.MovieApplication;
 import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
 import com.ellison.eigakensaku.constants.Constants;
-import com.ellison.eigakensaku.debug.ImageLoadCallback;
-import com.ellison.eigakensaku.utils.Utils;
+import com.ellison.eigakensaku.glide.ImageRequestListener;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private static final String TAG = "MovieAdapter";
+    private static final String TAG = MovieAdapter.class.getSimpleName();
     private Context mContext;
     private MovieList mMovies;
     private ILoadMoreListener iLoadMoreListener;
@@ -103,17 +105,47 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder instanceof MovieHolder) {
             Movie movie = mMovies.get(position);
             MovieHolder movieHolder = (MovieHolder) holder;
-            Log.d("ellison2020", "Movie[" + position + "]:" + movie);
+            Log.d(TAG, "Movie[" + position + "]:" + movie);
 
             // Show title
             movieHolder.title.setText(movie.getTitle());
 
             // Show post
+
+            // With customized image loader
             // EllisonImageDisplayer.getDisplayer(mContext).displayImage(holder.post, movie.getPoster());
-            MovieApplication.getImageLoader(mContext).displayImage(movie.getPoster(),
-                    movieHolder.post,
-                    Utils.getImageOptions(R.drawable.rv_item_post_loading),
-                    new ImageLoadCallback());
+
+            // With UIL
+//            DisplayImageOptions options = new DisplayImageOptions.Builder()
+//                    .showImageOnFail(R.drawable.rv_item_post_place_holder_error)
+//                    .showImageOnLoading(R.drawable.rv_item_post_place_holder)
+//                    .build();
+//            MovieApplication.getImageLoader(mContext).displayImage(movie.getPoster(),
+//                    movieHolder.post,
+//                    options,
+//                    new ImageLoadCallback());
+
+            // With Glide
+            RequestOptions options = new RequestOptions()
+                    // .transform(new GrayscaleTransformation())
+                    // .fitCenter()
+                    // .placeholder(R.drawable.rv_item_post_place_holder)
+                    .format(DecodeFormat.PREFER_ARGB_8888)
+                    .placeholder(R.drawable.rv_item_post_place_holder_img)
+                    .override(200, 250)
+                    // .override(Target.SIZE_ORIGINAL)
+                    // .skipMemoryCache(true)
+                    // .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .error(R.drawable.rv_item_post_place_holder_error_emoji);
+                    // .error(R.drawable.rv_item_post_place_holder_error);
+
+            Glide.with(mContext)
+                    .load(movie.getPoster())
+                    .apply(options)
+                    // .transition(GenericTransitionOptions.withNoTransition())
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .listener(new ImageRequestListener())
+                    .into(movieHolder.post);
 
             // Show year
             movieHolder.year.setText(movie.getYear());
@@ -124,17 +156,17 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
             LoadingHodler loadingHodler = (LoadingHodler) holder;
             switch (mState) {
                 case LOADING:
-                    Log.d("edison", "LOADING VISIBLE & VISIBLE");
+                    Log.d(TAG, "LOADING VISIBLE & VISIBLE");
                     loadingHodler.itemView.setVisibility(View.VISIBLE);
                     loadingHodler.progressbar.setVisibility(View.VISIBLE);
                     loadingHodler.loadingdes.setText(R.string.text_rv_item_load);
                     break;
                 case COMPLETED:
-                    Log.d("edison", "COMPLETED INVISIBLE");
+                    Log.d(TAG, "COMPLETED INVISIBLE");
                     loadingHodler.itemView.setVisibility(View.INVISIBLE);
                     break;
                 case END:
-                    Log.d("edison", "END VISIBLE & GONE");
+                    Log.d(TAG, "END VISIBLE & GONE");
                     loadingHodler.itemView.setVisibility(View.VISIBLE);
                     loadingHodler.progressbar.setVisibility(View.GONE);
                     loadingHodler.loadingdes.setText(R.string.text_rv_item_load_end);

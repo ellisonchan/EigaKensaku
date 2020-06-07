@@ -1,4 +1,4 @@
-package com.ellison.eigakensaku.utils;
+package com.ellison.eigakensaku.myimageloader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
