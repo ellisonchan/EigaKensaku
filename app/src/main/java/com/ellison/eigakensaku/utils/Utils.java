@@ -5,9 +5,11 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.util.Log;
 
 import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
+import com.ellison.eigakensaku.constants.Constants;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
@@ -101,5 +103,21 @@ public class Utils {
 
     public static void recycleProgressDialog() {
         mProgressDialog = null;
+    }
+
+    public static void logError(String tag, String message) {
+        Log.e(tag, message);
+    }
+
+    public static void logDebug(String tag, String message) {
+        if (Constants.DEBUGGABLE) {
+            Log.d(tag, message);
+        }
+    }
+
+    public static void logDebug(String tag, String message, Throwable throwable) {
+        if (Constants.DEBUGGABLE) {
+            Log.d(tag, message, throwable);
+        }
     }
 }

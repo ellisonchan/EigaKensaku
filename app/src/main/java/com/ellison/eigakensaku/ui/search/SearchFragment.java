@@ -1,61 +1,64 @@
 package com.ellison.eigakensaku.ui.search;
 
 import android.content.Context;
-
-import com.ellison.eigakensaku.ui.animator.AnimatorShowerImplement;
-import com.ellison.eigakensaku.ui.animator.AnimatorType;
-import com.ellison.eigakensaku.ui.animator.IAnimatorShower;
-import com.ellison.eigakensaku.ui.animator.IAnimatorCallback;
-import com.ellison.eigakensaku.constants.Constants;
-import com.ellison.eigakensaku.presenter.IMoviePresenter;
-import com.ellison.eigakensaku.presenter.MoviePresenter;
-import com.ellison.eigakensaku.utils.Utils;
-import com.ellison.eigakensaku.ui.view.IMovieView;
-import com.ellison.eigakensaku.R;
-import com.ellison.eigakensaku.ui.base.BaseActivity;
-import com.ellison.eigakensaku.beans.MovieList;
-import com.ellison.eigakensaku.ui.view.MovieAdapter;
-import com.ellison.eigakensaku.ui.view.MovieItemDecoration;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
+import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class MovieSearchActivity extends BaseActivity implements IMovieView,
+import com.ellison.eigakensaku.R;
+import com.ellison.eigakensaku.beans.MovieList;
+import com.ellison.eigakensaku.constants.Constants;
+import com.ellison.eigakensaku.presenter.IMoviePresenter;
+import com.ellison.eigakensaku.presenter.MoviePresenter;
+import com.ellison.eigakensaku.ui.animator.AnimatorShowerImplement;
+import com.ellison.eigakensaku.ui.animator.AnimatorType;
+import com.ellison.eigakensaku.ui.animator.IAnimatorCallback;
+import com.ellison.eigakensaku.ui.animator.IAnimatorShower;
+import com.ellison.eigakensaku.ui.base.BaseFragment;
+import com.ellison.eigakensaku.ui.view.IMovieView;
+import com.ellison.eigakensaku.ui.view.MovieAdapter;
+import com.ellison.eigakensaku.ui.view.MovieItemDecoration;
+import com.ellison.eigakensaku.ui.view.MovieSearchBox;
+import com.ellison.eigakensaku.utils.Utils;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+public class SearchFragment extends BaseFragment
+        implements View.OnClickListener,
+        IMovieView,
         EditText.OnEditorActionListener,
         TextWatcher,
         SwipeRefreshLayout.OnRefreshListener,
         IAnimatorCallback,
         MovieAdapter.ILoadMoreListener {
 
-    private static final String TAG = "MovieSearchActivity";
+    private static final String TAG = SearchFragment.class.getSimpleName();
     private String mKeywords;
     private IMoviePresenter mMoviePresenter;
     private MovieAdapter mMovieAdapter;
     private IAnimatorShower mAnimator;
+    private boolean mResumed = false;
 
     @BindView(R.id.search_box)
-    EditText mSearchBox;
+    MovieSearchBox mSearchBox;
 
     @BindView(R.id.fab)
     FloatingActionButton mFABtn;
@@ -66,19 +69,20 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     @BindView(R.id.rv_layout)
     RecyclerView mRecyclerView;
 
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
+        Utils.logDebug(TAG, this + " onCreateView()" + " container:" + container);
+        View root = inflater.inflate(R.layout.fragment_search, container, false);
+        return root;
+    }
+
     @Override
     protected void init() {
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-
-        setContentView(R.layout.activity_noscrolling);
-        // setContentView(R.layout.activity_scrolling);
-        ButterKnife.bind(this);
-
-        if (mSearchBox != null)
+        super.init();
+        if (mSearchBox != null) {
             mSearchBox.setOnEditorActionListener(this);
-
-        if (mSearchBox != null)
             mSearchBox.addTextChangedListener(this);
+        }
 
         if (mRefreshLayout != null)
             mRefreshLayout.setOnRefreshListener(this);
@@ -95,7 +99,7 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     private void initRecyclerView() {
         StaggeredGridLayoutManager sgLM = new StaggeredGridLayoutManager(Constants.MOVIE_LIST_ROW_NUMBER, StaggeredGridLayoutManager.VERTICAL);
-        mMovieAdapter = new MovieAdapter(this);
+        mMovieAdapter = new MovieAdapter(getActivity());
         mMovieAdapter.setILoadMoreListener(this);
         MovieItemDecoration decoration=new MovieItemDecoration(Constants.MOVIE_LIST_ITEM_SPACE);
 
@@ -107,6 +111,24 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mResumed = false;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mResumed = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mResumed = false;
+    }
+
+    @Override
     public void onAnimationStart() {
     }
 
@@ -115,6 +137,12 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
     }
 
     @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.fab) {
+            onFabBtnClicked();
+        }
+    }
+
     protected void onFabBtnClicked() {
         mAnimator.showAnimator(mFABtn, AnimatorType.CLICKED, this);
 
@@ -167,13 +195,13 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
     private boolean ensureKeywordNotNull() {
         if (mSearchBox == null || mSearchBox.getText() == null || mSearchBox.getText().toString().isEmpty()) {
-            Log.e(TAG, "Search operation blocked since no input keyword.");
+            Utils.logError(TAG, "Search operation blocked since no input keyword.");
 
             if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
-                mRefreshLayout.post(()->mRefreshLayout.setRefreshing(false));
+                mRefreshLayout.post(() -> mRefreshLayout.setRefreshing(false));
             }
 
-            Toast.makeText(MovieSearchActivity.this, R.string.text_keyword_empty, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.text_keyword_empty, Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -187,7 +215,7 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
 
         if (mFABtn.isEnabled()) {
             if (mRefreshLayout != null) {
-                mRefreshLayout.post(()->mRefreshLayout.setRefreshing(true));
+                mRefreshLayout.post(() -> mRefreshLayout.setRefreshing(true));
             }
             searchMovieRequest(Constants.GET_REQUEST_NO_PAGE_INDEX + 1);
             if (mRecyclerView != null)
@@ -205,28 +233,17 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         searchMovieRequest(moreIndex);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_scrolling, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item == null) {
-            return false;
-        }
-
-        if (item.getItemId() == R.id.action_settings_search) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void updateFAButton(String string) {
-        if(string != null && !string.isEmpty()) {
+    public void updateFAButton(String string) {
+        if (string != null && !string.isEmpty()) {
             if (mKeywords == null || mKeywords.isEmpty()) {
-                mAnimator.showAnimator(mFABtn, AnimatorType.CLICKABLE, this);
+                if (mResumed) {
+                    mAnimator.showAnimator(mFABtn, AnimatorType.CLICKABLE, this);
+                }
+            } else if (!mResumed) {
+                mFABtn.setOnClickListener(this);
+                ColorStateList colorStateList = ColorStateList.valueOf(Constants.COLOR_TINT_FAB_ENABLE);
+                mFABtn.setBackgroundTintMode(PorterDuff.Mode.SRC_ATOP);
+                mFABtn.setBackgroundTintList(colorStateList);
             }
         } else {
             if (mKeywords != null && !mKeywords.isEmpty()) {
@@ -240,21 +257,23 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         if (mMoviePresenter != null) {
             mMoviePresenter.searchMovie(mKeywords, pageIndex);
         }
-    };
+    }
+
+    ;
 
     @Override
     public void showProgress() {
         if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
-            Utils.showProgressDialog(this, R.string.text_progress_refresh_waiting);
+            Utils.showProgressDialog(getActivity(), R.string.text_progress_refresh_waiting);
         } else {
-            Utils.showProgressDialog(this, R.string.text_progress_waiting);
+            Utils.showProgressDialog(getActivity(), R.string.text_progress_waiting);
         }
     }
 
     @Override
     public void hideProgress() {
         if (mRefreshLayout != null) {
-            mRefreshLayout.post(()->mRefreshLayout.setRefreshing(false));
+            mRefreshLayout.post(() -> mRefreshLayout.setRefreshing(false));
         }
 
         if (mRecyclerView != null)
@@ -284,13 +303,26 @@ public class MovieSearchActivity extends BaseActivity implements IMovieView,
         } else {
             // Load failed
             mMovieAdapter.updateMovies(null, true);
-            Utils.showAlertDialog(this, errorMsg);
+            Utils.showAlertDialog(getActivity(), errorMsg);
         }
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroyView() {
+        super.onDestroyView();
+        mResumed = false;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mResumed = false;
+    }
+
+    @Override
+    public void onDestroy() {
         super.onDestroy();
         Utils.recycleProgressDialog();
+        mResumed = false;
     }
 }

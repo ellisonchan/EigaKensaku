@@ -1,6 +1,8 @@
 package com.ellison.eigakensaku.constants;
 
 public class Constants {
+    public static final boolean DEBUGGABLE = true;
+
     public static final String OMDB_URL = "http://omdbapi.com/";
     // public static final String OMDB_API_KEY = "19b0bce5";
     public static final String OMDB_API_KEY = "9a5d98e2";

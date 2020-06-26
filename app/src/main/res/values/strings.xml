@@ -31,4 +31,13 @@
     <string name="text_keyword_empty">Please enter a keyword.</string>
 
     <string name="post_cd" translatable="false">Movie post</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="title_search">Search</string>
+    <string name="title_star">Star</string>
+    <string name="title_info">Info</string>
+
+    <string name="warning_starred_movie_none">No starred movie yet.</string>
+
+    <string name="settings_info">Settings.</string>
+
 </resources>
