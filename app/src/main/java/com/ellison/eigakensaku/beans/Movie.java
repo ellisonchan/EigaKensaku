@@ -2,10 +2,14 @@ package com.ellison.eigakensaku.beans;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class Movie {
+public class Movie implements Serializable {
+    private static final long serialVersionUID = 7897981L;
+
     @SerializedName("Title")
     private String Title;
     @SerializedName("Poster")

@@ -18,12 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import butterknife.BindView;
 
 import com.ellison.eigakensaku.R;
+import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.presenter.IMoviePresenter;
@@ -41,6 +43,8 @@ import com.ellison.eigakensaku.utils.Utils;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
+
 public class SearchFragment extends BaseFragment
         implements View.OnClickListener,
         IMovieView,
@@ -49,8 +53,8 @@ public class SearchFragment extends BaseFragment
         SwipeRefreshLayout.OnRefreshListener,
         IAnimatorCallback,
         MovieAdapter.ILoadMoreListener {
-
     private static final String TAG = SearchFragment.class.getSimpleName();
+
     private String mKeywords;
     private IMoviePresenter mMoviePresenter;
     private MovieAdapter mMovieAdapter;
@@ -71,14 +75,14 @@ public class SearchFragment extends BaseFragment
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        Utils.logDebug(TAG, this + " onCreateView()" + " container:" + container);
+        Utils.logDebug(TAG, this + " onCreateView()" + " container:" + container + " savedInstanceState:" + savedInstanceState);
         View root = inflater.inflate(R.layout.fragment_search, container, false);
         return root;
     }
 
     @Override
-    protected void init() {
-        super.init();
+    protected void init(Bundle savedInstanceState) {
+        super.init(savedInstanceState);
         if (mSearchBox != null) {
             mSearchBox.setOnEditorActionListener(this);
             mSearchBox.addTextChangedListener(this);
@@ -89,7 +93,7 @@ public class SearchFragment extends BaseFragment
 
         mMoviePresenter = new MoviePresenter(this);
 
-        initRecyclerView();
+        initRecyclerView(savedInstanceState);
 
         mFABtn.getDrawable().setAlpha(Constants.ALPHA_FAB_DISABLE);
         mFABtn.setClickable(false);
@@ -97,7 +101,8 @@ public class SearchFragment extends BaseFragment
         mAnimator = new AnimatorShowerImplement();
     }
 
-    private void initRecyclerView() {
+    private void initRecyclerView(Bundle savedInstanceState) {
+        Utils.logDebug(TAG, this + " initRecyclerView()");
         StaggeredGridLayoutManager sgLM = new StaggeredGridLayoutManager(Constants.MOVIE_LIST_ROW_NUMBER, StaggeredGridLayoutManager.VERTICAL);
         mMovieAdapter = new MovieAdapter(getActivity());
         mMovieAdapter.setILoadMoreListener(this);
@@ -107,19 +112,47 @@ public class SearchFragment extends BaseFragment
             mRecyclerView.setLayoutManager(sgLM);
             mRecyclerView.setAdapter(mMovieAdapter);
             mRecyclerView.addItemDecoration(decoration);
+
+            MovieList list = Utils.readMoviesFromFile(getActivity());
+            Utils.logDebug(TAG, this + " initRecyclerView() list:" + list);
+            // Restore state if view is destroyed but fragment's instance not.
+            if (list != null) {
+                mMovieAdapter.updateMovies(list);
+            }
+
+            // Restore state if view and fragment's recycled when need memory.
+            if (savedInstanceState != null) {
+                Serializable data = (MovieList) savedInstanceState.getSerializable(Constants.BUNDLE_KEY_MOVIES_SAVED_LIST);
+                if (data instanceof MovieList) {
+                    mMovieAdapter.updateMovies((MovieList) data);
+                }
+            }
         }
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        mResumed = false;
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Utils.logDebug(TAG, this + " onViewStateRestored()" + " savedInstanceState:" + savedInstanceState);
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mResumed = true;
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        Utils.logDebug(TAG, "onSaveInstanceState() list:" + mMovieAdapter.getMovies());
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(Constants.BUNDLE_KEY_MOVIES_SAVED_LIST, mMovieAdapter.getMovies());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mResumed = false;
     }
 
     @Override
@@ -259,8 +292,6 @@ public class SearchFragment extends BaseFragment
         }
     }
 
-    ;
-
     @Override
     public void showProgress() {
         if (mRefreshLayout != null && mRefreshLayout.isRefreshing()) {
@@ -311,6 +342,7 @@ public class SearchFragment extends BaseFragment
     public void onDestroyView() {
         super.onDestroyView();
         mResumed = false;
+        Utils.saveMoviesToFile(mMovieAdapter.getMovies(), getActivity());
     }
 
     @Override
@@ -324,5 +356,6 @@ public class SearchFragment extends BaseFragment
         super.onDestroy();
         Utils.recycleProgressDialog();
         mResumed = false;
+        Utils.saveMoviesToFile(null, getActivity());
     }
 }

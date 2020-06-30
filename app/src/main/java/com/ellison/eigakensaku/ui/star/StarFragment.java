@@ -23,8 +23,8 @@ public class StarFragment extends BaseFragment {
     }
 
     @Override
-    protected void init() {
-        super.init();
+    protected void init(Bundle savedInstanceState) {
+        super.init(savedInstanceState);
 
         if(mWarn != null) {
             mWarn.setText(R.string.warning_starred_movie_none);

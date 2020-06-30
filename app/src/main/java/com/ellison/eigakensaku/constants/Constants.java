@@ -45,4 +45,7 @@ public class Constants {
     public static final float SCALE_FAB_NORMAL = 1.0f;
     public static final float SCALE_FAB_CLICKABLE = 1.03f;
     public static final float SCALE_FAB_CLICKED = 1.1f;
+
+    public static final String BUNDLE_KEY_MOVIES_SAVED_LIST = "movie_saved_list";
+    public static final String MOVIES_SAVED_SERIALED_FILE = "movie_saved";
 }

@@ -43,13 +43,13 @@ public abstract class BaseFragment extends Fragment {
     @Override
     @CallSuper
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Utils.logDebug(TAG, this + " onViewCreated()" + " view:" + view);
-        init();
+        Utils.logDebug(TAG, this + " onViewCreated()" + " view:" + view + " savedInstanceState:" + savedInstanceState);
+        init(savedInstanceState);
         super.onViewCreated(view, savedInstanceState);
     }
 
     @CallSuper
-    protected void init() {
+    protected void init(@Nullable Bundle savedInstanceState) {
         Utils.logDebug(TAG, this + " init()");
         mBinder = ButterKnife.bind(this, getView());
     }

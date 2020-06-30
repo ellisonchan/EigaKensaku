@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 
 import com.ellison.eigakensaku.beans.Movie;
@@ -13,7 +12,19 @@ import com.ellison.eigakensaku.constants.Constants;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InvalidClassException;
+import java.io.NotSerializableException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
 public class Utils {
+    private static final String TAG = Utils.class.getSimpleName();
+
     private static ProgressDialog mProgressDialog;
 
     public static void showAlertDialog(Context context, int resId) {
@@ -119,5 +130,57 @@ public class Utils {
         if (Constants.DEBUGGABLE) {
             Log.d(tag, message, throwable);
         }
+    }
+
+    public static void saveMoviesToFile(MovieList list, Context context) {
+        File savedFile = new File(context.getFilesDir() + File.separator + Constants.MOVIES_SAVED_SERIALED_FILE);
+
+        ObjectOutputStream stream = null;
+        try {
+            stream = new ObjectOutputStream(new FileOutputStream(savedFile));
+            stream.writeObject(list);
+        } catch (FileNotFoundException e) {
+            logError(TAG, "saveMoviesToFile FileNotFoundException:" +  e);
+        } catch (InvalidClassException e) {
+            logError(TAG, "saveMoviesToFile InvalidClassException:" +  e);
+        } catch (NotSerializableException e) {
+            logError(TAG, "saveMoviesToFile NotSerializableException:" +  e);
+        } catch (IOException e) {
+            logError(TAG, "saveMoviesToFile IOException:" +  e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+    public static MovieList readMoviesFromFile(Context context) {
+        File savedFile = new File(context.getFilesDir() + File.separator + Constants.MOVIES_SAVED_SERIALED_FILE);
+
+        MovieList list = null;
+        ObjectInputStream stream = null;
+        try {
+            stream = new ObjectInputStream(new FileInputStream(savedFile));
+            list = (MovieList) stream.readObject();
+        } catch (FileNotFoundException e) {
+            logError(TAG, "readMoviesFromFile FileNotFoundException:" +  e);
+        } catch (ClassNotFoundException e) {
+            logError(TAG, "readMoviesFromFile ClassNotFoundException:" +  e);
+        } catch (NotSerializableException e) {
+            logError(TAG, "readMoviesFromFile NotSerializableException:" +  e);
+        } catch (IOException e) {
+            logError(TAG, "readMoviesFromFile IOException:" +  e);
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+        return list;
     }
 }

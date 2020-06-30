@@ -23,8 +23,8 @@ public class InfoFragment extends BaseFragment {
     }
 
     @Override
-    protected void init() {
-        super.init();
+    protected void init(Bundle savedInstanceState) {
+        super.init(savedInstanceState);
 
         if(mSettings != null) {
             mSettings.setText(R.string.settings_info);
