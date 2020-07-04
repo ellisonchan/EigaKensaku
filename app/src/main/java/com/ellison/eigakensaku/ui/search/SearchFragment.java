@@ -111,7 +111,7 @@ public class SearchFragment extends BaseFragment
         if (mRecyclerView != null) {
             mRecyclerView.setLayoutManager(sgLM);
             mRecyclerView.setAdapter(mMovieAdapter);
-            mRecyclerView.addItemDecoration(decoration);
+            // mRecyclerView.addItemDecoration(decoration);
 
             MovieList list = Utils.readMoviesFromFile(getActivity());
             Utils.logDebug(TAG, this + " initRecyclerView() list:" + list);
