@@ -13,7 +13,7 @@
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
             android:paddingLeft="3dp"
             android:paddingRight="3dp" />
 
@@ -21,8 +21,9 @@
             android:id="@+id/load_cd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
             android:textSize="@dimen/rv_item_load_size"
-            android:text="@string/text_rv_item_load"
             tools:text="@string/text_rv_item_load_for_test" />
+    <!--            android:text="@string/text_rv_item_load"-->
+
     </LinearLayout>

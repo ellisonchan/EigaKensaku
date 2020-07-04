@@ -12,7 +12,7 @@ public class Constants {
     public static final String OMDB_API_PARAM_PAGE = "page";
 
     public static final int MOVIE_LIST_ROW_NUMBER = 2;
-    public static final int MOVIE_LIST_ITEM_SPACE = 50;
+    public static final int MOVIE_LIST_ITEM_SPACE = 40;
 
     public static final String SEARCH_ERROR_RESULT_LARGE = "Too many results.";
     public static final String SEARCH_ERROR_RESULT_LARGE_TIP = "Too many results!\nTry entering some more specific keywords please!";

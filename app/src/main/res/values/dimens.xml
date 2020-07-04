@@ -16,8 +16,11 @@
     <dimen name="rv_item_year_size">13sp</dimen>
     <dimen name="rv_item_type_size">13sp</dimen>
 
-    <dimen name="rv_item_layout_size">80dp</dimen>
+    <dimen name="rv_item_layout_size">120dp</dimen>
     <dimen name="rv_item_load_size">18sp</dimen>
+
+    <dimen name="rv_item_margin_left">32dp</dimen>
+
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>

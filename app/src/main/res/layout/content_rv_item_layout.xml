@@ -5,6 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@color/design_default_color_primary"
+    android:layout_marginLeft="@dimen/rv_item_margin_left"
     app:cardCornerRadius="@dimen/rv_item_post_radius">
 
     <LinearLayout

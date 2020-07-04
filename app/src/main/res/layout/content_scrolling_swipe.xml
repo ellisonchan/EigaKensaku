@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search.MovieSearchActivity"
+    tools:context=".ui.main.MainActivity"
     tools:showIn="@layout/activity_scrolling">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout

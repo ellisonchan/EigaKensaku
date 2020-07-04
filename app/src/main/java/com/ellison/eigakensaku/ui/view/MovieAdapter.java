@@ -163,7 +163,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     Log.d(TAG, "LOADING VISIBLE & VISIBLE");
                     loadingHodler.itemView.setVisibility(View.VISIBLE);
                     loadingHodler.progressbar.setVisibility(View.VISIBLE);
-                    loadingHodler.loadingdes.setText(R.string.text_rv_item_load);
+                    loadingHodler.loadingdes.setVisibility(View.GONE);
+                    // loadingHodler.loadingdes.setText(R.string.text_rv_item_load);
                     break;
                 case COMPLETED:
                     Log.d(TAG, "COMPLETED INVISIBLE");
@@ -173,6 +174,7 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                     Log.d(TAG, "END VISIBLE & GONE");
                     loadingHodler.itemView.setVisibility(View.VISIBLE);
                     loadingHodler.progressbar.setVisibility(View.GONE);
+                    loadingHodler.loadingdes.setVisibility(View.VISIBLE);
                     loadingHodler.loadingdes.setText(R.string.text_rv_item_load_end);
                     break;
                 default:
