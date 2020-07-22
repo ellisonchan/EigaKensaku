@@ -48,4 +48,20 @@ public class Constants {
 
     public static final String BUNDLE_KEY_MOVIES_SAVED_LIST = "movie_saved_list";
     public static final String MOVIES_SAVED_SERIALED_FILE = "movie_saved";
+
+    public static final float SWIPE_SHOW_MENU_THRESHOLD_FOR_SEARCH = 0.45f;
+    public static final float SWIPE__MENU_SELECTED_TRANSITION_Z = 10f;
+    public static final float SWIPE__MENU_UNSELECTED_TRANSITION_Z = 0f;
+
+    public static final float SCALE_STAR_NORMAL = 1.0f;
+    public static final float SCALE_STAR_STARRED = 1.8f;
+    public static final float SCALE_STAR_NORMAL_FINAL = 1.4f;
+    public static final float SCALE_STAR_UNSTARRED = 1.4f;
+    public static final float SCALE_STAR_UNSTARRED_FINAL = 0.5f;
+    public static final int DURATION_STARRED = 1000;
+    public static final int DURATION_UNSTARRED = 800;
+    public static final float STAR_CHANGE_SCALE_FRACTION_THRESHOLD = 0.4f;
+    public static final int COLOR_FILL_STARRED = 0xFFFFFFFF;
+    public static final int COLOR_FILL_UNSTARRED = 0x00FFFFFF;
+
 }

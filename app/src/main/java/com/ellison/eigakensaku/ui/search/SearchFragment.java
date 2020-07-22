@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -35,6 +36,7 @@ import com.ellison.eigakensaku.ui.animator.AnimatorType;
 import com.ellison.eigakensaku.ui.animator.IAnimatorCallback;
 import com.ellison.eigakensaku.ui.animator.IAnimatorShower;
 import com.ellison.eigakensaku.ui.base.BaseFragment;
+import com.ellison.eigakensaku.ui.touch.ItemSwipeCallback;
 import com.ellison.eigakensaku.ui.view.IMovieView;
 import com.ellison.eigakensaku.ui.view.MovieAdapter;
 import com.ellison.eigakensaku.ui.view.MovieItemDecoration;
@@ -98,7 +100,7 @@ public class SearchFragment extends BaseFragment
         mFABtn.getDrawable().setAlpha(Constants.ALPHA_FAB_DISABLE);
         mFABtn.setClickable(false);
 
-        mAnimator = new AnimatorShowerImplement();
+        mAnimator = AnimatorShowerImplement.getInstance();
     }
 
     private void initRecyclerView(Bundle savedInstanceState) {
@@ -106,11 +108,16 @@ public class SearchFragment extends BaseFragment
         StaggeredGridLayoutManager sgLM = new StaggeredGridLayoutManager(Constants.MOVIE_LIST_ROW_NUMBER, StaggeredGridLayoutManager.VERTICAL);
         mMovieAdapter = new MovieAdapter(getActivity());
         mMovieAdapter.setILoadMoreListener(this);
-        MovieItemDecoration decoration=new MovieItemDecoration(Constants.MOVIE_LIST_ITEM_SPACE);
+        MovieItemDecoration decoration = new MovieItemDecoration(Constants.MOVIE_LIST_ITEM_SPACE);
+        ItemSwipeCallback touchCallback = new ItemSwipeCallback();
+        ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
+        touchCallback.syncTouchHelper(touchHelper);
 
         if (mRecyclerView != null) {
             mRecyclerView.setLayoutManager(sgLM);
             mRecyclerView.setAdapter(mMovieAdapter);
+            touchHelper.attachToRecyclerView(mRecyclerView);
+            // mRecyclerView.requestDisallowInterceptTouchEvent(true);
             // mRecyclerView.addItemDecoration(decoration);
 
             MovieList list = Utils.readMoviesFromFile(getActivity());

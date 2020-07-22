@@ -7,14 +7,39 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.AnimatedVectorDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 
+import com.ellison.eigakensaku.R;
 import com.ellison.eigakensaku.constants.Constants;
+import com.ellison.eigakensaku.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AnimatorShowerImplement implements IAnimatorShower {
+    private static final String TAG = AnimatorShowerImplement.class.getSimpleName();
+
+    private static AnimatorShowerImplement sInstance = null;
+
+    private AnimatorShowerImplement() {
+    }
+
+    public static AnimatorShowerImplement getInstance() {
+        if (sInstance == null) {
+            synchronized (AnimatorShowerImplement.class) {
+                if (sInstance == null) {
+                    sInstance = new AnimatorShowerImplement();
+                }
+            }
+        }
+
+        return sInstance;
+    }
+
     @Override
     public void showAnimator(View view, AnimatorType type, IAnimatorCallback callback) {
         switch (type) {
@@ -23,6 +48,12 @@ public class AnimatorShowerImplement implements IAnimatorShower {
             case CLICKABLE:
                 break;
             case UNCLICKABLE:
+                break;
+            case STARRING:
+                showStarAnimator(view, true, callback);
+                break;
+            case UNSTARRING:
+                showStarAnimator(view, false, callback);
                 break;
             default:
                 break;
@@ -130,6 +161,72 @@ public class AnimatorShowerImplement implements IAnimatorShower {
         set.setDuration(Constants.DURATION_FAB_CLICKED);
         set.playTogether(xAnimator, yAnimator, scaleDrawableAnimator);
         set.start();
+        set.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                callback.onAnimationStart();
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                super.onAnimationEnd(animation);
+                callback.onAnimationEnd();
+            }
+        });
+    }
+
+    private void showStarAnimator(View view, boolean isStarring, IAnimatorCallback callback) {
+        // init scale animator
+        ObjectAnimator xAnimator, yAnimator;
+        if (isStarring) {
+            xAnimator = ObjectAnimator.ofFloat(view, "scaleX", Constants.SCALE_STAR_NORMAL, Constants.SCALE_STAR_STARRED, Constants.SCALE_STAR_NORMAL_FINAL);
+            yAnimator = ObjectAnimator.ofFloat(view, "scaleY", Constants.SCALE_STAR_NORMAL, Constants.SCALE_STAR_STARRED, Constants.SCALE_STAR_NORMAL_FINAL);
+        } else {
+            xAnimator = ObjectAnimator.ofFloat(view, "scaleX", Constants.SCALE_STAR_NORMAL, Constants.SCALE_STAR_UNSTARRED, Constants.SCALE_STAR_UNSTARRED_FINAL);
+            yAnimator = ObjectAnimator.ofFloat(view, "scaleY", Constants.SCALE_STAR_NORMAL, Constants.SCALE_STAR_UNSTARRED, Constants.SCALE_STAR_UNSTARRED_FINAL);
+        }
+
+        // To-do: update svg file's fill color by object animator.
+        // ValueAnimator colorAnimator;
+//        if (isStarring) {
+//            // need argb color
+//            // colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_FILL_UNSTARRED, Constants.COLOR_FILL_STARRED);
+//            colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_TINT_FAB_DISABLE, Constants.COLOR_TINT_FAB_ENABLE);
+//        } else {
+//            // need argb color
+//            colorAnimator = ValueAnimator.ofArgb(Constants.COLOR_FILL_STARRED, Constants.COLOR_FILL_UNSTARRED);
+//        }
+
+        // play scale and alpha animator
+        AnimatorSet set = new AnimatorSet();
+        set.setInterpolator(isStarring ? new DecelerateInterpolator() : new AccelerateDecelerateInterpolator());
+        set.setDuration(isStarring ? Constants.DURATION_STARRED : Constants.DURATION_UNSTARRED);
+        set.playTogether(xAnimator, yAnimator);
+        set.start();
+
+        // Change svg when 1/2 played.
+        xAnimator.addUpdateListener(animation -> {
+            float fraction = animation.getAnimatedFraction();
+            Utils.logDebug(TAG, "update fraction:" + fraction);
+
+            if (view instanceof ImageView) {
+                final ImageView iv = (ImageView) view;
+                if (fraction > Constants.STAR_CHANGE_SCALE_FRACTION_THRESHOLD) {
+                     if (!isStarring) {
+                        iv.setImageResource(R.drawable.ic_frag_star_new_like);
+                        Utils.logDebug(TAG, "update like");
+                    }
+                }
+
+                if (fraction > Constants.STAR_CHANGE_SCALE_FRACTION_THRESHOLD) {
+                    if (isStarring) {
+                        iv.setImageResource(R.drawable.ic_frag_star_new_liked);
+                        Utils.logDebug(TAG, "update liked");
+                    }
+                }
+            }
+        });
         set.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {

@@ -1,72 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.ellison.eigakensaku.ui.view.MovieCard xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/iv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/rv_item_margin"
     android:background="@color/design_default_color_primary"
-    app:cardCornerRadius="@dimen/rv_item_post_radius">
+    android:orientation="horizontal">
 
-    <LinearLayout
+    <com.ellison.eigakensaku.ui.view.MovieCard
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
+        android:layout_height="match_parent"
+        android:background="@color/design_default_color_primary"
+        app:cardCornerRadius="@dimen/rv_item_post_radius">
 
-    <ImageView
-        android:id="@+id/iv_post"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/rv_item_post_height"
-        android:scaleType="fitXY"
-        android:adjustViewBounds="true"
-        android:src="@drawable/rv_item_post_for_test"
-        android:contentDescription="@string/post_cd"
-        tools:srcCompat="@drawable/rv_item_post_for_test" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_title"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="3dp"
-            android:paddingRight="3dp"
-            android:textColor="@android:color/background_dark"
-            android:ellipsize="end"
-            android:singleLine="true"
+            android:orientation="vertical">
 
-            android:textStyle="bold"
-            tools:text="@string/text_rv_item_title_for_test" />
+            <ImageView
+                android:id="@+id/iv_post"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/rv_item_post_height"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/post_cd"
+                android:scaleType="fitXY"
+                android:src="@drawable/rv_item_post_for_test"
+                tools:srcCompat="@drawable/rv_item_post_for_test" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tv_year"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="3dp"
+                        android:textColor="@android:color/background_dark"
+                        android:textSize="@dimen/rv_item_year_size"
+                        android:textStyle="italic"
+                        tools:text="@string/text_rv_item_year_for_test" />
+
+                    <TextView
+                        android:id="@+id/tv_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:paddingRight="3dp"
+                        android:textColor="@android:color/background_dark"
+                        android:textSize="@dimen/rv_item_type_size"
+                        android:textStyle="italic"
+                        tools:text="@string/text_rv_item_type_for_test" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:singleLine="true"
+                    android:textColor="@android:color/background_dark"
+                    android:textStyle="bold"
+                    tools:text="@string/text_rv_item_title_for_test" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.ellison.eigakensaku.ui.view.MovieCard>
+
+    <FrameLayout
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_orange_light">
+
         <TextView
-            android:id="@+id/tv_year"
+            android:id="@+id/item_menu_tip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="3dp"
-            android:textColor="@android:color/background_dark"
-            android:textSize="@dimen/rv_item_year_size"
-            android:textStyle="italic"
-            tools:text="@string/text_rv_item_year_for_test" />
-
-        <TextView
-            android:id="@+id/tv_type"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:text="@string/text_rv_menu_type_content_star"
+            tools:text="@string/text_rv_menu_type_for_test" />
+        <ImageView
+            android:id="@+id/item_menu_icon"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:paddingRight="3dp"
-            android:textColor="@android:color/background_dark"
-            android:textSize="@dimen/rv_item_type_size"
-            android:textStyle="italic"
-            tools:text="@string/text_rv_item_type_for_test" />
-        </RelativeLayout>
-    </LinearLayout>
+            android:layout_height="30dp"
+            android:src="@drawable/ic_frag_star_new_like"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            android:visibility="invisible"
+            />
+    </FrameLayout>
 
 </LinearLayout>
-</com.ellison.eigakensaku.ui.view.MovieCard>
