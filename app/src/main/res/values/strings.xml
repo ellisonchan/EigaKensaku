@@ -26,9 +26,14 @@
     <string name="text_rv_item_type_for_test">Magical</string>
     <string name="text_rv_item_load_for_test">Loading</string>
     <string name="text_rv_menu_type_for_test">Star</string>
+    <string name="text_rv_item_actor_for_test">Daniel/Emma/Jet...</string>
+    <string name="text_rv_item_country_for_test">England</string>
+    <string name="text_rv_item_info_for_test">A doze of students played at a agic academy belongs to England.</string>
 
     <string name="text_rv_menu_type_content_star">Star</string>
     <string name="text_rv_menu_type_content_unstar">Unstar</string>
+
+    <string name="text_rv_menu_type_starred_remove">Unstar</string>
 
     <string name="text_rv_item_load">Loading more</string>
     <string name="text_rv_item_load_end">No more results</string>

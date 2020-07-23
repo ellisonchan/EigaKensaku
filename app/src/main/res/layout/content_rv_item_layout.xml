@@ -20,15 +20,29 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/iv_post"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/rv_item_post_height"
-                android:adjustViewBounds="true"
-                android:contentDescription="@string/post_cd"
-                android:scaleType="fitXY"
-                android:src="@drawable/rv_item_post_for_test"
-                tools:srcCompat="@drawable/rv_item_post_for_test" />
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/rv_item_post_height"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/post_cd"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/rv_item_post_for_test"
+                    tools:srcCompat="@drawable/rv_item_post_for_test" />
+                <ImageView
+                    android:id="@+id/iv_star"
+                    android:layout_width="@dimen/rv_item_star_size"
+                    android:layout_height="@dimen/rv_item_star_size"
+                    android:layout_gravity="left|top"
+                    android:layout_marginTop="@dimen/rv_item_star_margin"
+                    android:layout_marginLeft="@dimen/rv_item_star_margin"
+                    android:src="@drawable/iv_starred"
+                    tools:srcCompat="@drawable/iv_starred"
+                    android:visibility="invisible" />
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -79,7 +93,7 @@
     </com.ellison.eigakensaku.ui.view.MovieCard>
 
     <FrameLayout
-        android:layout_width="100dp"
+        android:layout_width="@dimen/rv_item_menu_width_search"
         android:layout_height="match_parent"
         android:background="@android:color/holo_orange_light">
 
@@ -88,16 +102,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@android:color/white"
             android:text="@string/text_rv_menu_type_content_star"
+            android:textColor="@android:color/white"
             tools:text="@string/text_rv_menu_type_for_test" />
         <ImageView
             android:id="@+id/item_menu_icon"
             android:layout_width="wrap_content"
             android:layout_height="30dp"
-            android:src="@drawable/ic_frag_star_new_like"
             android:layout_gravity="center"
             android:scaleType="centerInside"
+            android:src="@drawable/ic_frag_star_new_like"
             android:visibility="invisible"
             />
     </FrameLayout>

@@ -34,6 +34,10 @@ public class Utils {
     }
 
     public static void showAlertDialog(Context context, String message) {
+        if (context == null) {
+            return;
+        }
+
         if (!((Activity) context).isFinishing()) {
             AlertDialog dialog = new AlertDialog.Builder(context)
                     .setMessage(message)
@@ -118,6 +122,10 @@ public class Utils {
 
     public static void logError(String tag, String message) {
         Log.e(tag, message);
+    }
+
+    public static void logError(String tag, String message, Throwable throwable) {
+        Log.e(tag, message, throwable);
     }
 
     public static void logDebug(String tag, String message) {

@@ -15,25 +15,29 @@ import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.beans.MovieList;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.glide.ImageRequestListener;
+import com.ellison.eigakensaku.ui.touch.ISwipeDataSync;
+import com.ellison.eigakensaku.utils.Utils;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ISwipeDataSync {
     private static final String TAG = MovieAdapter.class.getSimpleName();
     private Context mContext;
     private MovieList mMovies;
-    private ILoadMoreListener iLoadMoreListener;
+    private IDataUpdateCallback iDataUpdateCallback;
     private LoadMoreState mState = LoadMoreState.COMPLETED;
     private int mCurrentPage = 0;
 
-    public interface ILoadMoreListener {
+    public interface IDataUpdateCallback {
         void onLoadMoreClicked(int index);
+        void onItemStarred(Movie movie, boolean isStarred);
+        boolean isItemStarred(Movie movie);
     }
 
-    public void setILoadMoreListener(ILoadMoreListener listener) {
-        iLoadMoreListener = listener;
+    public void setIDataUpdateCallback(IDataUpdateCallback listener) {
+        iDataUpdateCallback = listener;
     }
 
     public enum LoadMoreState {
@@ -95,7 +99,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
         if (viewType == Constants.TYPE_RV_CONTENT) {
             itemView = LayoutInflater.from(mContext).inflate(R.layout.content_rv_item_layout, parent, false);
-            return new MovieHolder(itemView);
+            // return new MovieHolder(itemView);
+            return new MovieHolder(itemView, this);
         } else if (viewType == Constants.TYPE_RV_LOAD) {
             itemView = LayoutInflater.from(mContext).inflate(R.layout.load_rv_item_layout, parent, false);
             return new LoadingHodler(itemView);
@@ -106,6 +111,8 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Utils.logDebug(TAG, "onBindViewHolder() holder:" + holder + " pos:" + position);
+
         if (holder instanceof MovieHolder) {
             Movie movie = mMovies.get(position);
             MovieHolder movieHolder = (MovieHolder) holder;
@@ -116,27 +123,45 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             // Show post
 
-            // With customized image loader
+            // 1, With customized image loader
             // EllisonImageDisplayer.getDisplayer(mContext).displayImage(holder.post, movie.getPoster());
 
-            // With UIL
-//            DisplayImageOptions options = new DisplayImageOptions.Builder()
-//                    .showImageOnFail(R.drawable.rv_item_post_place_holder_error)
-//                    .showImageOnLoading(R.drawable.rv_item_post_place_holder)
-//                    .build();
-//            MovieApplication.getImageLoader(mContext).displayImage(movie.getPoster(),
-//                    movieHolder.post,
-//                    options,
-//                    new ImageLoadCallback());
+            // 2, With UIL
+            /* DisplayImageOptions options = new DisplayImageOptions.Builder()
+                    .showImageOnFail(R.drawable.rv_item_post_place_holder_error)
+                    .showImageOnLoading(R.drawable.rv_item_post_place_holder)
+                    .build();
+            DebugMovieApplication.getImageLoader(mContext).displayImage(movie.getPoster(),
+                    movieHolder.post,
+                    options,
+                    new ImageLoadingListener() {
+                        @Override
+                        public void onLoadingStarted(String imageUri, View view) {
+                        }
 
-            // With Glide
+                        @Override
+                        public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
+                            Utils.logError(TAG, " url:" + imageUri + " failReason:" + failReason.getType() + " detail:", failReason.getCause());
+                        }
+
+                        @Override
+                        public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                        }
+
+                        @Override
+                        public void onLoadingCancelled(String imageUri, View view) {
+                        }
+                    });
+             */
+
+            // 3, With Glide
             RequestOptions options = new RequestOptions()
                     // .transform(new GrayscaleTransformation())
                     // .fitCenter()
                     // .placeholder(R.drawable.rv_item_post_place_holder)
                     .format(DecodeFormat.PREFER_ARGB_8888)
                     .placeholder(R.drawable.rv_item_post_place_holder_img)
-                    .override(200, 250)
+                    .override(200, 260)
                     // .override(Target.SIZE_ORIGINAL)
                     // .skipMemoryCache(true)
                     // .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -156,6 +181,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
             // Show type
             movieHolder.type.setText(movie.getType());
+
+            // Show star
+            movieHolder.syncStarState(iDataUpdateCallback.isItemStarred(movie));
         } else if (holder instanceof LoadingHodler) {
             LoadingHodler loadingHodler = (LoadingHodler) holder;
             switch (mState) {
@@ -205,9 +233,9 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                         int[] last = new int[count];
                         ((StaggeredGridLayoutManager) layoutManager).findLastCompletelyVisibleItemPositions(last);
 
-                        if (last[0] == count - 1 && isSwipeUp && iLoadMoreListener != null) {
+                        if (last[0] == count - 1 && isSwipeUp && iDataUpdateCallback != null) {
                             // Do load more operation.
-                            iLoadMoreListener.onLoadMoreClicked(mCurrentPage + 1);
+                            iDataUpdateCallback.onLoadMoreClicked(mCurrentPage + 1);
                             updateLoadingState(LoadMoreState.LOADING);
                             notifyDataSetChanged();
                         }
@@ -253,5 +281,13 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @Override
     public int getItemCount() {
         return mMovies.size() + 1;
+    }
+
+    @Override
+    public void onItemStarred(int pos, boolean isStarred) {
+        Utils.logDebug(TAG, "onItemStarred() pos:" + pos + " isStarred:" + isStarred);
+        if (iDataUpdateCallback != null) {
+            iDataUpdateCallback.onItemStarred(mMovies.get(pos), isStarred);
+        }
     }
 }

@@ -1,14 +1,24 @@
 package com.ellison.eigakensaku.presenter;
 
+import android.content.Context;
+
+import com.ellison.eigakensaku.beans.Movie;
 import com.ellison.eigakensaku.constants.Constants;
 import com.ellison.eigakensaku.model.IMovieModel;
 import com.ellison.eigakensaku.model.MovieModel;
 import com.ellison.eigakensaku.ui.view.IMovieView;
 import com.ellison.eigakensaku.beans.MovieList;
 
+import java.util.List;
+
 public class MoviePresenter implements IMoviePresenter, IMovieListener {
     private final IMovieModel mMovieModel;
     private final IMovieView mMovieView;
+
+    public MoviePresenter() {
+        mMovieModel = new MovieModel();
+        mMovieView = null;
+    }
 
     public MoviePresenter(IMovieView movieView) {
         mMovieModel = new MovieModel(this);
@@ -23,6 +33,23 @@ public class MoviePresenter implements IMoviePresenter, IMovieListener {
             }
             mMovieModel.searchMovie(keywords, pageIndex);
         }
+    }
+
+    @Override
+    public void starMovie(Movie movie, boolean isStarred, Context context) {
+        if (mMovieModel != null) {
+            mMovieModel.starMovie(movie, isStarred, context);
+        }
+    }
+
+    @Override
+    public boolean isMovieStarred(Movie movie, Context context) {
+        return  mMovieModel == null ? false : mMovieModel.isMovieStarred(movie, context);
+    }
+
+    @Override
+    public List<Movie> getStarredMovie(Context context) {
+        return  mMovieModel == null ? null : mMovieModel.getStarredMovie(context);
     }
 
     @Override

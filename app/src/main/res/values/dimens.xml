@@ -8,18 +8,37 @@
     <dimen name="search_box_size">350dp</dimen>
 
     <dimen name="rv_item_post_radius">6dp</dimen>
+    <dimen name="rv_item_post_radius_star">4dp</dimen>
 
     <dimen name="rv_item_post_width">140dp</dimen>
     <dimen name="rv_item_post_height">165dp</dimen>
+
+    <dimen name="rv_item_star_size">30dp</dimen>
+    <dimen name="rv_item_star_margin">5dp</dimen>
 
     <dimen name="rv_item_title_size">15sp</dimen>
     <dimen name="rv_item_year_size">13sp</dimen>
     <dimen name="rv_item_type_size">13sp</dimen>
 
+    <dimen name="rv_item_post_width_star">100dp</dimen>
+    <dimen name="rv_item_post_height_star">120dp</dimen>
+
+    <dimen name="rv_item_title_size_star">20sp</dimen>
+    <dimen name="rv_item_year_size_star">10sp</dimen>
+    <dimen name="rv_item_type_size_star">10sp</dimen>
+    <dimen name="rv_item_actor_size_star">12sp</dimen>
+    <dimen name="rv_item_country_size_star">12sp</dimen>
+    <dimen name="rv_item_info_size_star">13sp</dimen>
+
     <dimen name="rv_item_layout_size">120dp</dimen>
     <dimen name="rv_item_load_size">18sp</dimen>
 
     <dimen name="rv_item_margin">12dp</dimen>
+    <dimen name="rv_item_margin_star">8dp</dimen>
+
+    <dimen name="rv_item_menu_width_search">100dp</dimen>
+    <dimen name="rv_item_menu_width_star">160dp</dimen>
+
 
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>

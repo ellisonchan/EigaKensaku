@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/star_main_content"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/rv_item_margin_star"
+    android:orientation="horizontal">
+
+    <com.ellison.eigakensaku.ui.view.MovieCard
+        android:id="@+id/star_cv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        app:cardCornerRadius="@dimen/rv_item_post_radius_star">
+
+        <LinearLayout
+            android:id="@+id/star_post_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/star_iv_post"
+                android:layout_width="@dimen/rv_item_post_width_star"
+                android:layout_height="@dimen/rv_item_post_height_star"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/post_cd"
+                android:scaleType="fitXY"
+                android:src="@drawable/rv_item_post_for_test"
+                tools:srcCompat="@drawable/rv_item_post_for_test" />
+
+            <LinearLayout
+                android:layout_margin="4dp"
+                android:id="@+id/star_text_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/star_tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="2"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/background_dark"
+                    android:textSize="@dimen/rv_item_title_size_star"
+                    android:textStyle="bold"
+                    tools:text="@string/text_rv_item_title_for_test" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:padding="2dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/star_tv_year"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/background_dark"
+                        android:textSize="@dimen/rv_item_year_size_star"
+                        android:textStyle="italic"
+                        tools:text="@string/text_rv_item_year_for_test" />
+
+                    <TextView
+                        android:id="@+id/star_tv_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@android:color/background_dark"
+                        android:textSize="@dimen/rv_item_type_size_star"
+                        android:textStyle="italic"
+                        tools:text="@string/text_rv_item_type_for_test" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:padding="2dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/star_tv_actor"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@android:color/background_dark"
+                        android:layout_gravity="center"
+                        android:textStyle="italic"
+                        android:textSize="@dimen/rv_item_actor_size_star"
+                        tools:text="@string/text_rv_item_actor_for_test" />
+
+                    <TextView
+                        android:id="@+id/star_tv_country"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:singleLine="true"
+                        android:textColor="@android:color/background_dark"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="center"
+                        android:textStyle="italic"
+                        android:textSize="@dimen/rv_item_country_size_star"
+                        tools:text="@string/text_rv_item_country_for_test" />
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/star_tv_info"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="3"
+                    android:ellipsize="end"
+                    android:lines="3"
+                    android:textSize="@dimen/rv_item_info_size_star"
+                    android:textColor="@android:color/background_dark"
+                    android:textStyle="italic"
+                    tools:text="@string/text_rv_item_info_for_test" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.ellison.eigakensaku.ui.view.MovieCard>
+
+    <FrameLayout
+        android:id="@+id/item_remove_menu"
+        android:layout_width="@dimen/rv_item_menu_width_star"
+        android:layout_height="match_parent"
+        android:background="@android:color/holo_red_light">
+
+        <TextView
+            android:id="@+id/star_remove_tip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/text_rv_menu_type_starred_remove"
+            android:textColor="@android:color/white"
+            tools:text="@string/text_rv_menu_type_starred_remove" />
+
+        <ImageView
+            android:id="@+id/star_remove_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_remove"
+            android:visibility="invisible" />
+    </FrameLayout>
+
+</LinearLayout>

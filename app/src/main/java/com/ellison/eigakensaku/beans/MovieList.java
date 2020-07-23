@@ -2,6 +2,7 @@ package com.ellison.eigakensaku.beans;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +11,10 @@ public class MovieList extends ArrayList<Movie> implements Serializable {
 
     public MovieList() {
         super();
+    }
+
+    public MovieList(List<Movie> movieList) {
+        super(movieList);
     }
 
     @NonNull

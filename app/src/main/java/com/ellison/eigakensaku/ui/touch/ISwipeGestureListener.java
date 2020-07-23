@@ -5,6 +5,7 @@ public interface ISwipeGestureListener {
     void onSwipeMenuShowing(ISwipeMenuCallback callback);
     void onSwipeMenuSelected();
     void onSwipeMenuCleared();
+    void onDragOver(int targetPos);
 
     interface ISwipeMenuCallback{
         void onSwipeMenuShown();

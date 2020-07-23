@@ -48,7 +48,10 @@ public class Constants {
 
     public static final String BUNDLE_KEY_MOVIES_SAVED_LIST = "movie_saved_list";
     public static final String MOVIES_SAVED_SERIALED_FILE = "movie_saved";
+    public static final String MOVIES_STARRED_SERIALED_FILE = "movie_starred";
+    public static final int MOVIES_STARRED_SERIALED_SIZE_CAPACITY = 50;
 
+    public static final float SWIPE_SHOW_MENU_THRESHOLD_FOR_STAR = 0.5f;
     public static final float SWIPE_SHOW_MENU_THRESHOLD_FOR_SEARCH = 0.45f;
     public static final float SWIPE__MENU_SELECTED_TRANSITION_Z = 10f;
     public static final float SWIPE__MENU_UNSELECTED_TRANSITION_Z = 0f;

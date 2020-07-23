@@ -54,7 +54,7 @@ public class SearchFragment extends BaseFragment
         TextWatcher,
         SwipeRefreshLayout.OnRefreshListener,
         IAnimatorCallback,
-        MovieAdapter.ILoadMoreListener {
+        MovieAdapter.IDataUpdateCallback {
     private static final String TAG = SearchFragment.class.getSimpleName();
 
     private String mKeywords;
@@ -107,7 +107,7 @@ public class SearchFragment extends BaseFragment
         Utils.logDebug(TAG, this + " initRecyclerView()");
         StaggeredGridLayoutManager sgLM = new StaggeredGridLayoutManager(Constants.MOVIE_LIST_ROW_NUMBER, StaggeredGridLayoutManager.VERTICAL);
         mMovieAdapter = new MovieAdapter(getActivity());
-        mMovieAdapter.setILoadMoreListener(this);
+        mMovieAdapter.setIDataUpdateCallback(this);
         MovieItemDecoration decoration = new MovieItemDecoration(Constants.MOVIE_LIST_ITEM_SPACE);
         ItemSwipeCallback touchCallback = new ItemSwipeCallback();
         ItemTouchHelper touchHelper = new ItemTouchHelper(touchCallback);
@@ -263,6 +263,7 @@ public class SearchFragment extends BaseFragment
         }
     }
 
+    @Override
     public void onLoadMoreClicked(int moreIndex) {
         if (!ensureKeywordNotNull()) {
             new Handler().postDelayed(
@@ -271,6 +272,20 @@ public class SearchFragment extends BaseFragment
         }
 
         searchMovieRequest(moreIndex);
+    }
+
+    @Override
+    public boolean isItemStarred(Movie movie) {
+        Utils.logDebug(TAG, "isItemStarred movie:" + movie);
+        return mMoviePresenter == null ? false : mMoviePresenter.isMovieStarred(movie, getActivity().getApplicationContext());
+    }
+
+    @Override
+    public void onItemStarred(Movie movie, boolean isStarred) {
+        Utils.logDebug(TAG, "onItemStarred movie:" + movie + " isStarred:" + isStarred);
+        if (mMoviePresenter != null) {
+            mMoviePresenter.starMovie(movie, isStarred, getActivity().getApplicationContext());
+        }
     }
 
     public void updateFAButton(String string) {

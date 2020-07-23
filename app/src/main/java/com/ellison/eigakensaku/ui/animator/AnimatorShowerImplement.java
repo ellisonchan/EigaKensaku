@@ -7,8 +7,6 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.AnimatedVectorDrawable;
-import android.graphics.drawable.VectorDrawable;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
@@ -17,7 +15,6 @@ import android.widget.ImageView;
 
 import com.ellison.eigakensaku.R;
 import com.ellison.eigakensaku.constants.Constants;
-import com.ellison.eigakensaku.utils.Utils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class AnimatorShowerImplement implements IAnimatorShower {
@@ -54,6 +51,8 @@ public class AnimatorShowerImplement implements IAnimatorShower {
                 break;
             case UNSTARRING:
                 showStarAnimator(view, false, callback);
+            case REMOVING:
+                showSwipeAnimator(view, true, true, callback);
                 break;
             default:
                 break;
@@ -177,6 +176,10 @@ public class AnimatorShowerImplement implements IAnimatorShower {
     }
 
     private void showStarAnimator(View view, boolean isStarring, IAnimatorCallback callback) {
+        showSwipeAnimator(view, isStarring, false, callback);
+    }
+
+    private void showSwipeAnimator(View view, boolean isStarring, boolean isRemove, IAnimatorCallback callback) {
         // init scale animator
         ObjectAnimator xAnimator, yAnimator;
         if (isStarring) {
@@ -208,21 +211,19 @@ public class AnimatorShowerImplement implements IAnimatorShower {
         // Change svg when 1/2 played.
         xAnimator.addUpdateListener(animation -> {
             float fraction = animation.getAnimatedFraction();
-            Utils.logDebug(TAG, "update fraction:" + fraction);
+            // Utils.logDebug(TAG, "update fraction:" + fraction);
 
             if (view instanceof ImageView) {
                 final ImageView iv = (ImageView) view;
                 if (fraction > Constants.STAR_CHANGE_SCALE_FRACTION_THRESHOLD) {
-                     if (!isStarring) {
+                     if (isRemove) {
+                         iv.setImageResource(R.drawable.ic_remove_filled);
+                     } else if (!isStarring) {
                         iv.setImageResource(R.drawable.ic_frag_star_new_like);
-                        Utils.logDebug(TAG, "update like");
-                    }
-                }
-
-                if (fraction > Constants.STAR_CHANGE_SCALE_FRACTION_THRESHOLD) {
-                    if (isStarring) {
+                        // Utils.logDebug(TAG, "update like");
+                    } else {
                         iv.setImageResource(R.drawable.ic_frag_star_new_liked);
-                        Utils.logDebug(TAG, "update liked");
+                        // Utils.logDebug(TAG, "update liked");
                     }
                 }
             }

@@ -5,5 +5,6 @@ public enum AnimatorType {
     UNCLICKABLE,
     CLICKED,
     STARRING,
-    UNSTARRING
+    UNSTARRING,
+    REMOVING
 }
