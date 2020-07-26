@@ -67,4 +67,6 @@ public class Constants {
     public static final int COLOR_FILL_STARRED = 0xFFFFFFFF;
     public static final int COLOR_FILL_UNSTARRED = 0x00FFFFFF;
 
+    public static final int APPBAR_COLLAPSE_OFFSET_SLOP = 6;
+    public static final int SCROLL_HANDLE_THRESHOLD = 3;
 }

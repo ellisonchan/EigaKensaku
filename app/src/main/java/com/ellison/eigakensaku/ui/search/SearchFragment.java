@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -37,12 +38,15 @@ import com.ellison.eigakensaku.ui.animator.IAnimatorCallback;
 import com.ellison.eigakensaku.ui.animator.IAnimatorShower;
 import com.ellison.eigakensaku.ui.base.BaseFragment;
 import com.ellison.eigakensaku.ui.touch.ItemSwipeCallback;
+import com.ellison.eigakensaku.ui.touch.NestedSwipeRereshLayout;
+import com.ellison.eigakensaku.ui.touch.SwipeCollapseType;
 import com.ellison.eigakensaku.ui.view.IMovieView;
 import com.ellison.eigakensaku.ui.view.MovieAdapter;
 import com.ellison.eigakensaku.ui.view.MovieItemDecoration;
 import com.ellison.eigakensaku.ui.view.MovieSearchBox;
 import com.ellison.eigakensaku.utils.Utils;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.Serializable;
@@ -54,6 +58,7 @@ public class SearchFragment extends BaseFragment
         TextWatcher,
         SwipeRefreshLayout.OnRefreshListener,
         IAnimatorCallback,
+        NestedSwipeRereshLayout.INestedScrollListener,
         MovieAdapter.IDataUpdateCallback {
     private static final String TAG = SearchFragment.class.getSimpleName();
 
@@ -63,6 +68,11 @@ public class SearchFragment extends BaseFragment
     private IAnimatorShower mAnimator;
     private boolean mResumed = false;
 
+    private SwipeCollapseType mCollapseState = SwipeCollapseType.NORMAL;
+
+    @BindView(R.id.app_bar)
+    AppBarLayout mAppBar;
+
     @BindView(R.id.search_box)
     MovieSearchBox mSearchBox;
 
@@ -70,7 +80,7 @@ public class SearchFragment extends BaseFragment
     FloatingActionButton mFABtn;
 
     @BindView(R.id.refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
+    NestedSwipeRereshLayout mRefreshLayout;
 
     @BindView(R.id.rv_layout)
     RecyclerView mRecyclerView;
@@ -78,7 +88,9 @@ public class SearchFragment extends BaseFragment
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         Utils.logDebug(TAG, this + " onCreateView()" + " container:" + container + " savedInstanceState:" + savedInstanceState);
-        View root = inflater.inflate(R.layout.fragment_search, container, false);
+        // View root = inflater.inflate(R.layout.fragment_search, container, false);
+        View root = inflater.inflate(R.layout.fragment_search_nested, container, false);
+        // View root = inflater.inflate(R.layout.fragment_search_nested_reresh, container, false);
         return root;
     }
 
@@ -88,10 +100,43 @@ public class SearchFragment extends BaseFragment
         if (mSearchBox != null) {
             mSearchBox.setOnEditorActionListener(this);
             mSearchBox.addTextChangedListener(this);
+            mSearchBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Utils.logDebug(TAG, " onClick() v:" + v + " STATE:" + getCollapseState());
+                    if (getCollapseState() == SwipeCollapseType.COLLAPSED
+                            || getCollapseState() == SwipeCollapseType.COLLAPSING
+                            || getCollapseState() == SwipeCollapseType.EXPANDING) {
+                        ViewGroup.LayoutParams params = getViewParams(mAppBar);
+                        if (params != null) {
+                            Utils.logDebug(TAG, " onClick() params.height:" + params.height);
+                            params.height = mBarHeight;
+                            setViewParams(mAppBar, params);
+                            setCollapseState(SwipeCollapseType.NORMAL);
+                            Utils.logDebug(TAG, " onClick() AFTER params.height:" + params.height);
+                        }
+
+                        Utils.logDebug(TAG, " onClick() mFABtn.getTranslationY:" + mFABtn.getTranslationY());
+                        if (mFABtn != null) {
+                            if (mFABtn.getTranslationY() != 0) {
+                                Utils.logDebug(TAG, " onClick() mFABtn TRANSITION RESET");
+                                mFABtn.setTranslationY(0);
+                            }
+                            if (mFABtn.getVisibility() != View.VISIBLE) {
+                                Utils.logDebug(TAG, " onClick() mFABtn VISIBLE");
+                                mFABtn.setVisibility(View.VISIBLE);
+                            }
+                        }
+
+                    }
+                }
+            });
         }
 
-        if (mRefreshLayout != null)
+        if (mRefreshLayout != null) {
             mRefreshLayout.setOnRefreshListener(this);
+            mRefreshLayout.injectNestedScrollListener(this);
+        }
 
         mMoviePresenter = new MoviePresenter(this);
 
@@ -101,6 +146,30 @@ public class SearchFragment extends BaseFragment
         mFABtn.setClickable(false);
 
         mAnimator = AnimatorShowerImplement.getInstance();
+
+        mAppBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Utils.logDebug(TAG, " OnGlobalLayoutListener() mAppBar:" + mAppBar + " mSearchBox:" + mSearchBox + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD);
+                if (APPBAR_COLLAPSE_OFFSET_THRESHOLD != 0 || mAppBar == null || mSearchBox == null) {
+                    return;
+                }
+
+                mBarWidth = mAppBar.getWidth();
+                mBarHeight = mAppBar.getHeight();
+                mEditBoxWidth = mSearchBox.getWidth();
+                mEditBoxHeight = mSearchBox.getHeight();
+                FAB_TRANSITION_OFFSET_THRESHOLD = APPBAR_COLLAPSE_OFFSET_THRESHOLD = mBarHeight - mEditBoxHeight - Constants.APPBAR_COLLAPSE_OFFSET_SLOP;
+                FAB_VISIBLE_OFFSET_THRESHOLD = APPBAR_COLLAPSE_OFFSET_THRESHOLD - FAB_INVISIBLE_OFFSET_THRESHOLD;
+
+                Utils.logDebug(TAG, " OnGlobalLayoutListener() UPDATE mBarWidth:" + mBarWidth + " mBarHeight:" + mBarHeight
+                        + " mEditBoxWidth:" + mEditBoxWidth + " mEditBoxHeight:" + mEditBoxHeight
+                        + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD
+                        + " FAB_TRANSITION_OFFSET_THRESHOLD:" + FAB_TRANSITION_OFFSET_THRESHOLD
+                        + " FAB_INVISIBLE_OFFSET_THRESHOLD:" + FAB_INVISIBLE_OFFSET_THRESHOLD
+                        + " FAB_VISIBLE_OFFSET_THRESHOLD:" + FAB_VISIBLE_OFFSET_THRESHOLD);
+            }
+        });
     }
 
     private void initRecyclerView(Bundle savedInstanceState) {
@@ -117,8 +186,6 @@ public class SearchFragment extends BaseFragment
             mRecyclerView.setLayoutManager(sgLM);
             mRecyclerView.setAdapter(mMovieAdapter);
             touchHelper.attachToRecyclerView(mRecyclerView);
-            // mRecyclerView.requestDisallowInterceptTouchEvent(true);
-            // mRecyclerView.addItemDecoration(decoration);
 
             MovieList list = Utils.readMoviesFromFile(getActivity());
             Utils.logDebug(TAG, this + " initRecyclerView() list:" + list);
@@ -379,5 +446,188 @@ public class SearchFragment extends BaseFragment
         Utils.recycleProgressDialog();
         mResumed = false;
         Utils.saveMoviesToFile(null, getActivity());
+    }
+
+    private int cachedX = 0, cachedY = 0,
+            mBarHeightWhenDown = 0, mBarWidth = 0, mBarHeight = 0,
+            mEditBoxWidth = 0, mEditBoxHeight = 0;
+    public int APPBAR_COLLAPSE_OFFSET_THRESHOLD = 0,
+            FAB_INVISIBLE_OFFSET_THRESHOLD = 50,
+            FAB_VISIBLE_OFFSET_THRESHOLD = 0,
+            FAB_TRANSITION_OFFSET_THRESHOLD = 0;
+
+    /**
+     * Get appbar / fab 's collapse state.
+     */
+    private SwipeCollapseType getCollapseState() {
+        return mCollapseState;
+    }
+
+    /**
+     * Set appbar / fab 's collapse state.
+     */
+    private void setCollapseState(SwipeCollapseType state) {
+        mCollapseState = state;
+    }
+
+    private ViewGroup.LayoutParams getViewParams(View view) {
+        return view == null ? null : view.getLayoutParams();
+    }
+
+    private void setViewParams(View view, ViewGroup.LayoutParams params) {
+        if (view != null) {
+            view.setLayoutParams(params);
+        }
+    }
+
+    @Override
+    public void onScrollDown() {
+        Utils.logDebug(TAG, "onScrollDown cachedX:" + cachedX + " cachedY:" + cachedY + " mCachedHeight:" + mBarHeightWhenDown);
+        ViewGroup.LayoutParams params = getViewParams(mAppBar);
+
+        if (params != null) {
+            mBarHeightWhenDown = params.height;
+        }
+        Utils.logDebug(TAG, "onScrollDown WIDTH:" + params.width + " HEIGHT:" + params.height + " mCachedHeight:" + mBarHeightWhenDown);
+    }
+
+    @Override
+    public void onScrollUpCancel() {
+        Utils.logDebug(TAG, "onScrollUp cachedX:" + cachedX + " cachedY:" + cachedY + " mCachedHeight:" + mBarHeightWhenDown);
+        // Reset the scroll value.
+        mBarHeightWhenDown = cachedX = cachedY = 0;
+    }
+
+    @Override
+    public void onScroll(float dx, float dy, float xVelocity, float yVelocity) {
+        Utils.logDebug(TAG, "onScroll dx:" + dx + " dy:" + dy + " xVelocity:" + xVelocity + " yVelocity:" + yVelocity + " cachedX:" + cachedX + " cachedY:" + cachedY);
+        if (dy >= cachedY - Constants.SCROLL_HANDLE_THRESHOLD
+                && dy <= cachedY + Constants.SCROLL_HANDLE_THRESHOLD) {
+                // Not handle if swipe down offset less than threshold.
+                Utils.logDebug(TAG, "onScroll CACHED / BELOW THRESHOLD & NOTH");
+                return;
+        }
+
+        Utils.logDebug(TAG, "onScroll NO CACHED & FIX");
+        fixAppBarAndFAB(dx, dy);
+
+        Utils.logDebug(TAG, "onScroll NO CACHED & UPDATED");
+        cachedX = (int) dx;
+        cachedY = (int) dy;
+    }
+
+    @Override
+    public void onScroll(float dx, float dy) {
+    }
+
+    private void fixAppBarAndFAB(float dx, float dy) {
+        Utils.logDebug(TAG, "fixAppBarAndFAB dx:" + dx + " dy:" + dy);
+
+        if (mAppBar == null || mFABtn == null) {
+            return;
+        }
+
+        if (dy < 0 && getCollapseState() == SwipeCollapseType.COLLAPSED) {
+            Utils.logDebug(TAG, "fixAppBarAndFAB COLLAPSED & NOTH");
+            return;
+        }
+
+        if (dy > 0 && getCollapseState() == SwipeCollapseType.NORMAL) {
+            Utils.logDebug(TAG, "fixAppBarAndFAB NORMAL & NOTH");
+            return;
+        }
+
+        fixAppBar((int) dy);
+        fixFAB((int) dy);
+    }
+
+    private void fixAppBar(int heightOffset) {
+        Utils.logDebug(TAG, "fixAppBar heightOffset:" + heightOffset + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD);
+        ViewGroup.LayoutParams params = getViewParams(mAppBar);
+
+        if (params == null) {
+            return;
+        }
+
+        Utils.logDebug(TAG, "fixAppBar CURRENT WIDTH:" + params.width + " HEIGHT:" + params.height + " mBarHeightWhenDown:" + mBarHeightWhenDown);
+
+        if (heightOffset < 0) {
+            // Collapse
+            if (Math.abs(heightOffset) >= APPBAR_COLLAPSE_OFFSET_THRESHOLD) {
+                // Set width to threshold when dy over threshold before collapsed if width not collapsed to threshold.
+                if (params.height != mBarHeight - APPBAR_COLLAPSE_OFFSET_THRESHOLD) {
+                    params.height = mBarHeight - APPBAR_COLLAPSE_OFFSET_THRESHOLD;
+                    setViewParams(mAppBar, params);
+                    Utils.logDebug(TAG, "fixAppBar FIX HEIGHT BEFORE COLLAPSED & WIDTH:" + params.width + " HEIGHT:" + params.height);
+                }
+
+                // Collapsed
+                Utils.logDebug(TAG, "fixAppBar COLLAPSING & OVER THRESHOLD & COLLAPSED");
+                setCollapseState(SwipeCollapseType.COLLAPSED);
+                return;
+            }
+            setCollapseState(SwipeCollapseType.COLLAPSING);
+        } else {
+            // Expand
+            if (Math.abs(heightOffset) >= APPBAR_COLLAPSE_OFFSET_THRESHOLD) {
+                // Restore width when dy over threshold before expanded if not expanded to original size.
+                if (params.height != mBarHeight) {
+                    params.height = mBarHeight;
+                    setViewParams(mAppBar, params);
+                    Utils.logDebug(TAG, "fixAppBar FIX HEIGHT BEFORE EXPANDED & WIDTH:" + params.width + " HEIGHT:" + params.height);
+                }
+
+                // Expanded
+                Utils.logDebug(TAG, "fixAppBar EXPANDING & OVER THRESHOLD & NORMAL");
+                setCollapseState(SwipeCollapseType.NORMAL);
+                return;
+            }
+            setCollapseState(SwipeCollapseType.EXPANDING);
+        }
+
+        params.height = mBarHeightWhenDown + heightOffset;
+        setViewParams(mAppBar, params);
+        Utils.logDebug(TAG, "fixAppBar AFTER WIDTH:" + params.width + " HEIGHT:" + params.height);
+    }
+
+    private void fixFAB(int transitionY) {
+        Utils.logDebug(TAG, "fixFAB transitionY:" + transitionY);
+
+        if (transitionY < 0) {
+            // fade out
+            if (Math.abs(transitionY) >= FAB_INVISIBLE_OFFSET_THRESHOLD) {
+                Utils.logDebug(TAG, "fixFAB OVER THRESHOLD & INVISIBLE");
+
+                // show invisible animator
+                // ...
+                mFABtn.setVisibility(View.INVISIBLE);
+                return;
+            }
+
+            // transition FAB
+            Utils.logDebug(TAG, "fixFAB BELOW THRESHOLD & TRANSITION");
+            mFABtn.setTranslationY(transitionY);
+        } else {
+            // fade in
+            if (transitionY < FAB_VISIBLE_OFFSET_THRESHOLD) {
+                Utils.logDebug(TAG, "fixFAB BELOW THRESHOLD & DO NOTH");
+                return;
+            } else {
+                Utils.logDebug(TAG, "fixFAB OVER THRESHOLD & VISIBLE");
+                // show visible animator
+                // ...
+                mFABtn.setVisibility(View.VISIBLE);
+
+                if (transitionY < FAB_TRANSITION_OFFSET_THRESHOLD) {
+                    // transition FAB
+                    Utils.logDebug(TAG, "fixFAB BELOW THRESHOLD & TRANSITION");
+                    mFABtn.setTranslationY(FAB_TRANSITION_OFFSET_THRESHOLD - transitionY);
+                } else {
+                    // transition to original location
+                    Utils.logDebug(TAG, "fixFAB OVER THRESHOLD & TRANSITION TO ORIGINAL");
+                    mFABtn.setTranslationY(0);
+                }
+            }
+        }
     }
 }

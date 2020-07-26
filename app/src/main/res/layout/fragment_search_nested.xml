@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/colorSwipeRefreshBg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorSwipeRefreshBg"
+        android:orientation="vertical">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:id="@+id/app_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/app_bar_height"
+                android:gravity="center"
+                android:theme="@style/AppTheme.AppBarOverlay">
+
+                <com.ellison.eigakensaku.ui.view.MovieSearchBox
+                    android:id="@+id/search_box"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:ellipsize="end"
+                    android:enabled="true"
+                    android:focusableInTouchMode="true"
+                    android:gravity="center_vertical"
+                    android:hint="@string/edittext_hint"
+                    android:imeOptions="actionSearch"
+                    android:singleLine="true"
+                    android:textColor="@android:color/background_dark"
+                    android:textColorHint="@android:color/darker_gray" />
+            </com.google.android.material.appbar.AppBarLayout>
+
+<!--        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+        <com.ellison.eigakensaku.ui.touch.NestedSwipeRereshLayout
+            android:id="@+id/refresh_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorSwipeRefreshBg">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="8"
+                tools:listitem="@layout/content_rv_item_layout" />
+        </com.ellison.eigakensaku.ui.touch.NestedSwipeRereshLayout>
+<!--        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="@dimen/fab_width"
+        android:layout_height="@dimen/fab_height"
+        android:layout_marginTop="@dimen/fab_margin_top"
+        android:layout_marginRight="@dimen/fab_margin_right"
+        android:enabled="false"
+        app:backgroundTint="@color/cardview_dark_background"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end"
+        app:rippleColor="@color/design_default_color_primary"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

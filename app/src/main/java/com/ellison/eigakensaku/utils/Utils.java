@@ -103,9 +103,9 @@ public class Utils {
             Movie movie = new Movie();
             movie.setTitle("Harry Potter " + (i + 1));
             if (i == 1 || i ==3) {
-                movie.setPoster("https://cn.bing.com/th?id=OIP.fkcuaLhZJevCj6ja5lpm1wHaJv&pid=Api&rs=1");
+                movie.setPoster("https://upload-images.jianshu.io/upload_images/7048342-f49955b4e4d2f3d7.png?imageMogr2/auto-orient/strip|imageView2/2/w/762");
             } else {
-                movie.setPoster("https://i.ebayimg.com/images/i/291520000466-0-1/s-l1000.jpg");
+                movie.setPoster("https://oimagea3.ydstatic.com/image?id=-7532960978143817448&product=adpublish&w=520&h=347");
             }
             movie.setYear(String.valueOf(i + 2000));
             movie.setType("Magical");

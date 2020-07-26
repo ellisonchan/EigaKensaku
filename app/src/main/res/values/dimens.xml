@@ -2,7 +2,9 @@
     <dimen name="app_bar_height">100dp</dimen>
     <dimen name="fab_width">55dp</dimen>
     <dimen name="fab_height">55dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="fab_margin">15dp</dimen>
+    <dimen name="fab_margin_top">65dp</dimen>
+    <dimen name="fab_margin_right">15dp</dimen>
     <dimen name="text_margin">16dp</dimen>
 
     <dimen name="search_box_size">350dp</dimen>

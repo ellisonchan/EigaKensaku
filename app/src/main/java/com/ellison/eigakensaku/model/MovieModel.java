@@ -31,6 +31,9 @@ public class MovieModel implements IMovieModel, IMovieRequestCallback {
         Utils.logDebug(TAG, "searchMovie() keywords:" + keywords + " pageIndex:" + pageIndex);
         HttpManager.getInstance().requestMovieList(keywords, pageIndex, new MovieSearcheSubscribers(mMovieListener, keywords, pageIndex));
         // HttpManager.getInstance().requestMovieList(keywords, pageIndex, this);
+
+        // Make fake list instead of http get.
+        // mMovieListener.onMovieSucceed(keywords, Utils.makeFakeList(), pageIndex);
     }
 
     @Override
