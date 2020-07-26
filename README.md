@@ -8,7 +8,9 @@ Used with MVP Architecture.
 
 Screenshot
 --------
-![示例](https://github.com/ellisonchan/EigaKensaku/blob/master/screenshots/MovieSearcher.png)
+![搜索页面](https://github.com/ellisonchan/EigaKensaku/blob/master/screenshots/search_screen.png)
+![折叠页面](https://github.com/ellisonchan/EigaKensaku/blob/master/screenshots/search_screen_colla%5Bse.png)
+![收藏页面](https://github.com/ellisonchan/EigaKensaku/blob/master/screenshots/star_list_screen.png)
 
 To-do
 --------
