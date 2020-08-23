@@ -36,7 +36,7 @@ public class HttpManager {
         return mInstance;
     }
 
-    public void requestMovieList(final String keywords, int pageIndex, Subscriber<MovieSearchResponse<MovieList>> subscriber) {
+    public final void requestMovieList(final String keywords, int pageIndex, Subscriber<MovieSearchResponse<MovieList>> subscriber) {
         requestSearch(keywords, pageIndex, subscriber);
     }
 

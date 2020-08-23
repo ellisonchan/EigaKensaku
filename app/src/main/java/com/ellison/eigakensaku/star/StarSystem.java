@@ -59,17 +59,30 @@ public class StarSystem {
         if (mCachedStarredMovie != null) {
             boolean starringResult = isStarred ? mCachedStarredMovie.add(movie) : mCachedStarredMovie.remove(movie);
         } else {
-            Utils.logError(TAG, "starMoive CACHED FILE NULL & NOTH");
+            Utils.logError(TAG, "starMovie CACHED FILE NULL & NOTH");
         }
     }
 
-    public void syncStarSystem() {
+    public void syncAndClearCache() {
+        Utils.logError(TAG, "syncAndClearCache");
+        syncStarSystem();
+        clearCache();
+    }
+
+    private void syncStarSystem() {
         if (mCachedStarredMovie == null || mCachedStarredMovie.size() == 0) {
             Utils.logError(TAG, "syncStarSystem CACHED SET NULL/EMPTY & NOTH");
             return;
         }
 
         writeStarredMovie(mCachedStarredMovie);
+    }
+
+    private void clearCache() {
+        Utils.logError(TAG, "clearCache");
+        sInstance = null;
+        mCachedStarredMovie = null;
+        sContext = null;
     }
 
     private LinkedHashSet<Movie> readStarredMovie() {

@@ -1,15 +1,13 @@
 package com.ellison.eigakensaku.ui.base;
 
+import android.app.ActivityManager;
 import android.os.Bundle;
 
 import com.ellison.eigakensaku.R;
-import com.ellison.eigakensaku.ui.main.MainActivity;
 import com.ellison.eigakensaku.utils.Utils;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import butterknife.ButterKnife;
 
 import android.view.Menu;
@@ -18,25 +16,11 @@ import android.view.View;
 
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = BaseActivity.class.getSimpleName();
-    protected Toolbar mToolbar;
-    protected FloatingActionButton mFabButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Utils.logDebug(TAG, "onCreate() savedInstanceState:" + savedInstanceState);
         super.onCreate(savedInstanceState);
-
-//        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-//        if (mToolbar != null) {
-//            setSupportActionBar(mToolbar);
-//        }
-//
-//        mFabButton = (FloatingActionButton) findViewById(R.id.fab);
-//        if(mFabButton != null) {
-//            mFabButton.setOnClickListener(this);
-//        }
-
-        // init();
     }
 
     protected abstract void init();
@@ -63,7 +47,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onResume() {
-        Utils.logDebug(TAG, "onResume()");
+        ActivityManager am = getSystemService(ActivityManager.class);
+        ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
+        am.getMemoryInfo(memoryInfo);
+        Utils.logDebug(TAG, "onResume() memsize:" + am.getMemoryClass() + " total:" + memoryInfo.totalMem/1000000 + " avail:" + memoryInfo.availMem/1000000 + " threshold:" + memoryInfo.threshold/1000000);
+
         super.onResume();
     }
 
@@ -87,18 +75,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-//        if (v == null) {
-//            return;
-//        }
-//
-//        switch (v.getId()) {
-//            case R.id.fab:
-//                onFabBtnClicked();
-//                break;
-//        }
     }
-
-//    protected abstract void onFabBtnClicked();
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

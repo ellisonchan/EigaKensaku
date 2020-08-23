@@ -94,8 +94,6 @@ public class MovieApplication extends Application {
 
         @Override
         public void onActivityDestroyed(@NonNull Activity activity) {
-            Utils.logDebug(TAG, "onActivityDestroyed activity:" + activity);
-            StarSystem.getInstance(activity.getApplicationContext()).syncStarSystem();
         }
     }
 }

@@ -4,11 +4,12 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
+import com.ellison.eigakensaku.star.StarSystem;
 import com.ellison.eigakensaku.ui.base.BaseActivity;
-import com.ellison.eigakensaku.ui.base.BaseFragment;
 import com.ellison.eigakensaku.ui.info.InfoFragment;
 import com.ellison.eigakensaku.ui.search.SearchFragment;
 import com.ellison.eigakensaku.ui.star.StarFragment;
+import com.ellison.eigakensaku.utils.Utils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
@@ -102,5 +103,12 @@ public class MainActivity extends BaseActivity {
                 }
             });
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Utils.logDebug(TAG, "onDestroy()");
+        StarSystem.getInstance(getApplicationContext()).syncAndClearCache();
     }
 }
