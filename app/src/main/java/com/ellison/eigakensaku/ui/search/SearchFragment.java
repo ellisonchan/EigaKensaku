@@ -87,7 +87,7 @@ public class SearchFragment extends BaseFragment
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        Utils.logDebug(TAG, this + " onCreateView()" + " container:" + container + " savedInstanceState:" + savedInstanceState);
+        Utils.logDebug(Utils.TAG_SEARCH, this + " onCreateView()" + " container:" + container + " savedInstanceState:" + savedInstanceState);
         // View root = inflater.inflate(R.layout.fragment_search, container, false);
         View root = inflater.inflate(R.layout.fragment_search_nested, container, false);
         // View root = inflater.inflate(R.layout.fragment_search_nested_reresh, container, false);
@@ -103,27 +103,27 @@ public class SearchFragment extends BaseFragment
             mSearchBox.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Utils.logDebug(TAG, " onClick() v:" + v + " STATE:" + getCollapseState());
+                    Utils.logDebug(Utils.TAG_SEARCH, " onClick() v:" + v + " STATE:" + getCollapseState());
                     if (getCollapseState() == SwipeCollapseType.COLLAPSED
                             || getCollapseState() == SwipeCollapseType.COLLAPSING
                             || getCollapseState() == SwipeCollapseType.EXPANDING) {
                         ViewGroup.LayoutParams params = getViewParams(mAppBar);
                         if (params != null) {
-                            Utils.logDebug(TAG, " onClick() params.height:" + params.height);
+                            Utils.logDebug(Utils.TAG_SEARCH, " onClick() params.height:" + params.height);
                             params.height = mBarHeight;
                             setViewParams(mAppBar, params);
                             setCollapseState(SwipeCollapseType.NORMAL);
-                            Utils.logDebug(TAG, " onClick() AFTER params.height:" + params.height);
+                            Utils.logDebug(Utils.TAG_SEARCH, " onClick() AFTER params.height:" + params.height);
                         }
 
-                        Utils.logDebug(TAG, " onClick() mFABtn.getTranslationY:" + mFABtn.getTranslationY());
+                        Utils.logDebug(Utils.TAG_SEARCH, " onClick() mFABtn.getTranslationY:" + mFABtn.getTranslationY());
                         if (mFABtn != null) {
                             if (mFABtn.getTranslationY() != 0) {
-                                Utils.logDebug(TAG, " onClick() mFABtn TRANSITION RESET");
+                                Utils.logDebug(Utils.TAG_SEARCH, " onClick() mFABtn TRANSITION RESET");
                                 mFABtn.setTranslationY(0);
                             }
                             if (mFABtn.getVisibility() != View.VISIBLE) {
-                                Utils.logDebug(TAG, " onClick() mFABtn VISIBLE");
+                                Utils.logDebug(Utils.TAG_SEARCH, " onClick() mFABtn VISIBLE");
                                 mFABtn.setVisibility(View.VISIBLE);
                             }
                         }
@@ -150,7 +150,7 @@ public class SearchFragment extends BaseFragment
         mAppBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                Utils.logDebug(TAG, " OnGlobalLayoutListener() mAppBar:" + mAppBar + " mSearchBox:" + mSearchBox + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD);
+                Utils.logDebug(Utils.TAG_SEARCH, " OnGlobalLayoutListener() mAppBar:" + mAppBar + " mSearchBox:" + mSearchBox + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD);
                 if (APPBAR_COLLAPSE_OFFSET_THRESHOLD != 0 || mAppBar == null || mSearchBox == null) {
                     return;
                 }
@@ -162,7 +162,7 @@ public class SearchFragment extends BaseFragment
                 FAB_TRANSITION_OFFSET_THRESHOLD = APPBAR_COLLAPSE_OFFSET_THRESHOLD = mBarHeight - mEditBoxHeight - Constants.APPBAR_COLLAPSE_OFFSET_SLOP;
                 FAB_VISIBLE_OFFSET_THRESHOLD = APPBAR_COLLAPSE_OFFSET_THRESHOLD - FAB_INVISIBLE_OFFSET_THRESHOLD;
 
-                Utils.logDebug(TAG, " OnGlobalLayoutListener() UPDATE mBarWidth:" + mBarWidth + " mBarHeight:" + mBarHeight
+                Utils.logDebug(Utils.TAG_SEARCH, " OnGlobalLayoutListener() UPDATE mBarWidth:" + mBarWidth + " mBarHeight:" + mBarHeight
                         + " mEditBoxWidth:" + mEditBoxWidth + " mEditBoxHeight:" + mEditBoxHeight
                         + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD
                         + " FAB_TRANSITION_OFFSET_THRESHOLD:" + FAB_TRANSITION_OFFSET_THRESHOLD
@@ -173,7 +173,7 @@ public class SearchFragment extends BaseFragment
     }
 
     private void initRecyclerView(Bundle savedInstanceState) {
-        Utils.logDebug(TAG, this + " initRecyclerView()");
+        Utils.logDebug(Utils.TAG_SEARCH, this + " initRecyclerView()");
         StaggeredGridLayoutManager sgLM = new StaggeredGridLayoutManager(Constants.MOVIE_LIST_ROW_NUMBER, StaggeredGridLayoutManager.VERTICAL);
         mMovieAdapter = new MovieAdapter(getActivity());
         mMovieAdapter.setIDataUpdateCallback(this);
@@ -188,7 +188,7 @@ public class SearchFragment extends BaseFragment
             touchHelper.attachToRecyclerView(mRecyclerView);
 
             MovieList list = Utils.readMoviesFromFile(getActivity());
-            Utils.logDebug(TAG, this + " initRecyclerView() list:" + list);
+            Utils.logDebug(Utils.TAG_SEARCH, this + " initRecyclerView() list:" + list);
             // Restore state if view is destroyed but fragment's instance not.
             if (list != null) {
                 mMovieAdapter.updateMovies(list);
@@ -206,7 +206,7 @@ public class SearchFragment extends BaseFragment
 
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        Utils.logDebug(TAG, this + " onViewStateRestored()" + " savedInstanceState:" + savedInstanceState);
+        Utils.logDebug(Utils.TAG_SEARCH, this + " onViewStateRestored()" + " savedInstanceState:" + savedInstanceState);
         super.onViewStateRestored(savedInstanceState);
     }
 
@@ -218,7 +218,7 @@ public class SearchFragment extends BaseFragment
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        Utils.logDebug(TAG, "onSaveInstanceState() list:" + mMovieAdapter.getMovies());
+        Utils.logDebug(Utils.TAG_SEARCH, "onSaveInstanceState() list:" + mMovieAdapter.getMovies());
         super.onSaveInstanceState(outState);
         outState.putSerializable(Constants.BUNDLE_KEY_MOVIES_SAVED_LIST, mMovieAdapter.getMovies());
     }
@@ -343,13 +343,13 @@ public class SearchFragment extends BaseFragment
 
     @Override
     public boolean isItemStarred(Movie movie) {
-        Utils.logDebug(TAG, "isItemStarred movie:" + movie);
+        Utils.logDebug(Utils.TAG_SEARCH, "isItemStarred movie:" + movie);
         return mMoviePresenter == null ? false : mMoviePresenter.isMovieStarred(movie, getActivity().getApplicationContext());
     }
 
     @Override
     public void onItemStarred(Movie movie, boolean isStarred) {
-        Utils.logDebug(TAG, "onItemStarred movie:" + movie + " isStarred:" + isStarred);
+        Utils.logDebug(Utils.TAG_SEARCH, "onItemStarred movie:" + movie + " isStarred:" + isStarred);
         if (mMoviePresenter != null) {
             mMoviePresenter.starMovie(movie, isStarred, getActivity().getApplicationContext());
         }
@@ -482,36 +482,36 @@ public class SearchFragment extends BaseFragment
 
     @Override
     public void onScrollDown() {
-        Utils.logDebug(TAG, "onScrollDown cachedX:" + cachedX + " cachedY:" + cachedY + " mCachedHeight:" + mBarHeightWhenDown);
+        Utils.logDebug(Utils.TAG_SEARCH, "onScrollDown cachedX:" + cachedX + " cachedY:" + cachedY + " mCachedHeight:" + mBarHeightWhenDown);
         ViewGroup.LayoutParams params = getViewParams(mAppBar);
 
         if (params != null) {
             mBarHeightWhenDown = params.height;
         }
-        Utils.logDebug(TAG, "onScrollDown WIDTH:" + params.width + " HEIGHT:" + params.height + " mCachedHeight:" + mBarHeightWhenDown);
+        Utils.logDebug(Utils.TAG_SEARCH, "onScrollDown WIDTH:" + params.width + " HEIGHT:" + params.height + " mCachedHeight:" + mBarHeightWhenDown);
     }
 
     @Override
     public void onScrollUpCancel() {
-        Utils.logDebug(TAG, "onScrollUp cachedX:" + cachedX + " cachedY:" + cachedY + " mCachedHeight:" + mBarHeightWhenDown);
+        Utils.logDebug(Utils.TAG_SEARCH, "onScrollUp cachedX:" + cachedX + " cachedY:" + cachedY + " mCachedHeight:" + mBarHeightWhenDown);
         // Reset the scroll value.
         mBarHeightWhenDown = cachedX = cachedY = 0;
     }
 
     @Override
     public void onScroll(float dx, float dy, float xVelocity, float yVelocity) {
-        Utils.logDebug(TAG, "onScroll dx:" + dx + " dy:" + dy + " xVelocity:" + xVelocity + " yVelocity:" + yVelocity + " cachedX:" + cachedX + " cachedY:" + cachedY);
+        Utils.logDebug(Utils.TAG_SEARCH, "onScroll dx:" + dx + " dy:" + dy + " xVelocity:" + xVelocity + " yVelocity:" + yVelocity + " cachedX:" + cachedX + " cachedY:" + cachedY);
         if (dy >= cachedY - Constants.SCROLL_HANDLE_THRESHOLD
                 && dy <= cachedY + Constants.SCROLL_HANDLE_THRESHOLD) {
                 // Not handle if swipe down offset less than threshold.
-                Utils.logDebug(TAG, "onScroll CACHED / BELOW THRESHOLD & NOTH");
+                Utils.logDebug(Utils.TAG_SEARCH, "onScroll CACHED / BELOW THRESHOLD & NOTH");
                 return;
         }
 
-        Utils.logDebug(TAG, "onScroll NO CACHED & FIX");
+        Utils.logDebug(Utils.TAG_SEARCH, "onScroll NO CACHED & FIX");
         fixAppBarAndFAB(dx, dy);
 
-        Utils.logDebug(TAG, "onScroll NO CACHED & UPDATED");
+        Utils.logDebug(Utils.TAG_SEARCH, "onScroll NO CACHED & UPDATED");
         cachedX = (int) dx;
         cachedY = (int) dy;
     }
@@ -521,19 +521,19 @@ public class SearchFragment extends BaseFragment
     }
 
     private void fixAppBarAndFAB(float dx, float dy) {
-        Utils.logDebug(TAG, "fixAppBarAndFAB dx:" + dx + " dy:" + dy);
+        Utils.logDebug(Utils.TAG_SEARCH, "fixAppBarAndFAB dx:" + dx + " dy:" + dy);
 
         if (mAppBar == null || mFABtn == null) {
             return;
         }
 
         if (dy < 0 && getCollapseState() == SwipeCollapseType.COLLAPSED) {
-            Utils.logDebug(TAG, "fixAppBarAndFAB COLLAPSED & NOTH");
+            Utils.logDebug(Utils.TAG_SEARCH, "fixAppBarAndFAB COLLAPSED & NOTH");
             return;
         }
 
         if (dy > 0 && getCollapseState() == SwipeCollapseType.NORMAL) {
-            Utils.logDebug(TAG, "fixAppBarAndFAB NORMAL & NOTH");
+            Utils.logDebug(Utils.TAG_SEARCH, "fixAppBarAndFAB NORMAL & NOTH");
             return;
         }
 
@@ -542,14 +542,14 @@ public class SearchFragment extends BaseFragment
     }
 
     private void fixAppBar(int heightOffset) {
-        Utils.logDebug(TAG, "fixAppBar heightOffset:" + heightOffset + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD);
+        Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar heightOffset:" + heightOffset + " APPBAR_COLLAPSE_OFFSET_THRESHOLD:" + APPBAR_COLLAPSE_OFFSET_THRESHOLD);
         ViewGroup.LayoutParams params = getViewParams(mAppBar);
 
         if (params == null) {
             return;
         }
 
-        Utils.logDebug(TAG, "fixAppBar CURRENT WIDTH:" + params.width + " HEIGHT:" + params.height + " mBarHeightWhenDown:" + mBarHeightWhenDown);
+        Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar CURRENT WIDTH:" + params.width + " HEIGHT:" + params.height + " mBarHeightWhenDown:" + mBarHeightWhenDown);
 
         if (heightOffset < 0) {
             // Collapse
@@ -558,11 +558,11 @@ public class SearchFragment extends BaseFragment
                 if (params.height != mBarHeight - APPBAR_COLLAPSE_OFFSET_THRESHOLD) {
                     params.height = mBarHeight - APPBAR_COLLAPSE_OFFSET_THRESHOLD;
                     setViewParams(mAppBar, params);
-                    Utils.logDebug(TAG, "fixAppBar FIX HEIGHT BEFORE COLLAPSED & WIDTH:" + params.width + " HEIGHT:" + params.height);
+                    Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar FIX HEIGHT BEFORE COLLAPSED & WIDTH:" + params.width + " HEIGHT:" + params.height);
                 }
 
                 // Collapsed
-                Utils.logDebug(TAG, "fixAppBar COLLAPSING & OVER THRESHOLD & COLLAPSED");
+                Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar COLLAPSING & OVER THRESHOLD & COLLAPSED");
                 setCollapseState(SwipeCollapseType.COLLAPSED);
                 return;
             }
@@ -574,11 +574,11 @@ public class SearchFragment extends BaseFragment
                 if (params.height != mBarHeight) {
                     params.height = mBarHeight;
                     setViewParams(mAppBar, params);
-                    Utils.logDebug(TAG, "fixAppBar FIX HEIGHT BEFORE EXPANDED & WIDTH:" + params.width + " HEIGHT:" + params.height);
+                    Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar FIX HEIGHT BEFORE EXPANDED & WIDTH:" + params.width + " HEIGHT:" + params.height);
                 }
 
                 // Expanded
-                Utils.logDebug(TAG, "fixAppBar EXPANDING & OVER THRESHOLD & NORMAL");
+                Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar EXPANDING & OVER THRESHOLD & NORMAL");
                 setCollapseState(SwipeCollapseType.NORMAL);
                 return;
             }
@@ -587,16 +587,16 @@ public class SearchFragment extends BaseFragment
 
         params.height = mBarHeightWhenDown + heightOffset;
         setViewParams(mAppBar, params);
-        Utils.logDebug(TAG, "fixAppBar AFTER WIDTH:" + params.width + " HEIGHT:" + params.height);
+        Utils.logDebug(Utils.TAG_SEARCH, "fixAppBar AFTER WIDTH:" + params.width + " HEIGHT:" + params.height);
     }
 
     private void fixFAB(int transitionY) {
-        Utils.logDebug(TAG, "fixFAB transitionY:" + transitionY);
+        Utils.logDebug(Utils.TAG_SEARCH, "fixFAB transitionY:" + transitionY);
 
         if (transitionY < 0) {
             // fade out
             if (Math.abs(transitionY) >= FAB_INVISIBLE_OFFSET_THRESHOLD) {
-                Utils.logDebug(TAG, "fixFAB OVER THRESHOLD & INVISIBLE");
+                Utils.logDebug(Utils.TAG_SEARCH, "fixFAB OVER THRESHOLD & INVISIBLE");
 
                 // show invisible animator
                 // ...
@@ -605,26 +605,26 @@ public class SearchFragment extends BaseFragment
             }
 
             // transition FAB
-            Utils.logDebug(TAG, "fixFAB BELOW THRESHOLD & TRANSITION");
+            Utils.logDebug(Utils.TAG_SEARCH, "fixFAB BELOW THRESHOLD & TRANSITION");
             mFABtn.setTranslationY(transitionY);
         } else {
             // fade in
             if (transitionY < FAB_VISIBLE_OFFSET_THRESHOLD) {
-                Utils.logDebug(TAG, "fixFAB BELOW THRESHOLD & DO NOTH");
+                Utils.logDebug(Utils.TAG_SEARCH, "fixFAB BELOW THRESHOLD & DO NOTH");
                 return;
             } else {
-                Utils.logDebug(TAG, "fixFAB OVER THRESHOLD & VISIBLE");
+                Utils.logDebug(Utils.TAG_SEARCH, "fixFAB OVER THRESHOLD & VISIBLE");
                 // show visible animator
                 // ...
                 mFABtn.setVisibility(View.VISIBLE);
 
                 if (transitionY < FAB_TRANSITION_OFFSET_THRESHOLD) {
                     // transition FAB
-                    Utils.logDebug(TAG, "fixFAB BELOW THRESHOLD & TRANSITION");
+                    Utils.logDebug(Utils.TAG_SEARCH, "fixFAB BELOW THRESHOLD & TRANSITION");
                     mFABtn.setTranslationY(FAB_TRANSITION_OFFSET_THRESHOLD - transitionY);
                 } else {
                     // transition to original location
-                    Utils.logDebug(TAG, "fixFAB OVER THRESHOLD & TRANSITION TO ORIGINAL");
+                    Utils.logDebug(Utils.TAG_SEARCH, "fixFAB OVER THRESHOLD & TRANSITION TO ORIGINAL");
                     mFABtn.setTranslationY(0);
                 }
             }

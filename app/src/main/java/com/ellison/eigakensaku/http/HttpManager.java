@@ -13,7 +13,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class HttpManager {
-    private static HttpManager mInstance;
+    private volatile static HttpManager mInstance;
     private final MovieRequestService movieInterface;
 
     private HttpManager() {

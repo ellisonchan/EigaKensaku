@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+    public static final String TAG_SEARCH = "EigaKensaku.Search";
 
     private static ProgressDialog mProgressDialog;
 
@@ -129,12 +130,26 @@ public class Utils {
     }
 
     public static void logDebug(String tag, String message) {
+        if (TAG_SEARCH.equals(tag)) {
+            // When search tag, only output if log.tag.TAG_SEARCH is D or below D.
+            if (Log.isLoggable(tag, Log.DEBUG)) {
+                Log.d(tag, message);
+            }
+            return;
+        }
         if (Constants.DEBUGGABLE) {
             Log.d(tag, message);
         }
     }
 
     public static void logDebug(String tag, String message, Throwable throwable) {
+        if (TAG_SEARCH.equals(tag)) {
+            // When search tag, only output if log.tag.TAG_SEARCH is D or below D.
+            if (Log.isLoggable(tag, Log.DEBUG)) {
+                Log.d(tag, message, throwable);
+            }
+            return;
+        }
         if (Constants.DEBUGGABLE) {
             Log.d(tag, message, throwable);
         }

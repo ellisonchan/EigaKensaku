@@ -20,7 +20,7 @@ import java.util.List;
 public class StarSystem {
     private static final String TAG = StarSystem.class.getSimpleName();
 
-    private static StarSystem sInstance = null;
+    private volatile static StarSystem sInstance = null;
     private LinkedHashSet<Movie> mCachedStarredMovie = null;
     private Context sContext = null;
 

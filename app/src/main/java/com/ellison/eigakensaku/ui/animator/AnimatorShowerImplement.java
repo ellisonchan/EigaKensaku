@@ -20,7 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class AnimatorShowerImplement implements IAnimatorShower {
     private static final String TAG = AnimatorShowerImplement.class.getSimpleName();
 
-    private static AnimatorShowerImplement sInstance = null;
+    private volatile static AnimatorShowerImplement sInstance = null;
 
     private AnimatorShowerImplement() {
     }

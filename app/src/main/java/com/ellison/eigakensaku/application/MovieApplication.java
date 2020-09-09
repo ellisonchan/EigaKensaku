@@ -20,7 +20,7 @@ import java.io.File;
 public class MovieApplication extends Application {
     private static  final String TAG = MovieApplication.class.getSimpleName();
 
-    private static ImageLoader mImageLoader;
+    private volatile static ImageLoader mImageLoader;
     private RefWatcher refWatcher;
 
     @Override
